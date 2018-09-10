@@ -1,0 +1,22 @@
+load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
+
+filegroup(
+    name = "dashboards",
+    srcs = [
+        ":json_dashboards",
+        ":py_dashboards",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Picks up all *.json files in this directory:
+json_dashboards(
+    name = "json_dashboards",
+    srcs = glob(["*.json"]),
+)
+
+# Picks up all *.py files in this directory:
+py_dashboards(
+    name = "py_dashboards",
+    srcs = glob(["*.py"]),
+)

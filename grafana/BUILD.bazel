@@ -1,0 +1,5 @@
+py_binary(
+    name="uid_injector",
+    srcs=["uid_injector.py"],
+    visibility=["//visibility:public"],
+)

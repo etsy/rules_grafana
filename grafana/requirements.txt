@@ -1,0 +1,1 @@
+-e git+https://github.com/weaveworks/grafanalib.git@06d9b338a4fa208ed45961feebf1b7b555abc108#egg=grafanalib
