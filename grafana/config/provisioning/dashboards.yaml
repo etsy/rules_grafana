@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: ''
+    type: file
+    editable: True
+    options:
+      # Dashboards in this folder are automatically loaded by Grafana.
+      path: /var/lib/grafana/dashboards/
