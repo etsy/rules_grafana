@@ -3,8 +3,8 @@
 Dashboards as code, the [Bazel](https://bazel.build/) way.
 
 Try it out!  `bazel run //example:grafana` to build and load a Docker image,
-then run it with `docker run --rm -p 3001:3001 bazel/example:grafana`.
-Then load Grafana in your browser at `http://localhost:3001`!
+then run it with `docker run --rm -p 3000:3000 bazel/example:grafana`.
+Then load Grafana in your browser at `http://localhost:3000`!
 
 ## Installing
 
@@ -99,7 +99,7 @@ The JSON is generated at build time, not a run time, so Python isn't a runtime d
 ### Docker image
 
 Use `grafana_image` to build your dashboards into a Docker image containing Grafana.
-When you run the image, it starts Grafana on port 3001
+When you run the image, it starts Grafana on port 3000
 and serves all of the dashboards you've built,
 directly from the container.
 
