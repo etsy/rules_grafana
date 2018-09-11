@@ -2,7 +2,10 @@ load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dash
 
 json_dashboards(
     name = "json_dashboards",
-    srcs = ["no_uid.json", "existing_uid.json"],
+    srcs = [
+        "existing_uid.json",
+        "no_uid.json",
+    ],
 )
 
 py_dashboards(
@@ -13,23 +16,32 @@ py_dashboards(
 py_test(
     name = "json_no_uid_test",
     srcs = ["test.py"],
+    args = [
+        "$(location :no_uid.generated.json)",
+        "no_uid_json",
+    ],
     data = [":no_uid.generated.json"],
-    args = ["$(location :no_uid.generated.json)", "no_uid_json"],
     main = "test.py",
 )
 
 py_test(
     name = "json_existing_uid_test",
     srcs = ["test.py"],
+    args = [
+        "$(location :existing_uid.generated.json)",
+        "keep_my_uid",
+    ],
     data = [":existing_uid.generated.json"],
-    args = ["$(location :existing_uid.generated.json)", "keep_my_uid"],
     main = "test.py",
 )
 
 py_test(
     name = "py_dash_test",
     srcs = ["test.py"],
+    args = [
+        "$(location :dash.generated.json)",
+        "dash_py_json",
+    ],
     data = [":dash.generated.json"],
-    args = ["$(location :dash.generated.json)", "dash_py_json"],
     main = "test.py",
 )
