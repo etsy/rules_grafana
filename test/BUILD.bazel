@@ -50,13 +50,16 @@ py_test(
 
 genrule(
     name = "test_datasources",
-    outs = ['test_datasources.yaml'],
-    cmd = 'touch $(location test_datasources.yaml)',
+    outs = ["test_datasources.yaml"],
+    cmd = "touch $(location test_datasources.yaml)",
 )
 
 grafana_image(
     name = "grafana",
-    dashboards = [":json_dashboards", ":py_dashboards"],
+    dashboards = [
+        ":json_dashboards",
+        ":py_dashboards",
+    ],
     datasources = [":test_datasources.yaml"],
 )
 
