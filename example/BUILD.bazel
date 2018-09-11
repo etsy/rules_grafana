@@ -1,13 +1,5 @@
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
-
-filegroup(
-    name = "dashboards",
-    srcs = [
-        ":json_dashboards",
-        ":py_dashboards",
-    ],
-    visibility = ["//visibility:public"],
-)
+load("@io_bazel_rules_grafana//grafana:image.bzl", "grafana_image")
 
 # Picks up all *.json files in this directory:
 json_dashboards(
@@ -19,4 +11,21 @@ json_dashboards(
 py_dashboards(
     name = "py_dashboards",
     srcs = glob(["*.py"]),
+)
+
+# Built dashboards can be combined together in a filgroup for easy access:
+filegroup(
+    name = "dashboards",
+    srcs = [
+        ":json_dashboards",
+        ":py_dashboards",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Build the dashboards into a docker image:
+grafana_image(
+    name = "grafana",
+    dashboards = [":dashboards"],
+    datasources = [":datasources.yaml"],
 )

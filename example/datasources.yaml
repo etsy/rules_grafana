@@ -1,0 +1,7 @@
+apiVersion: 1
+datasources:
+  - access: proxy
+    name: graphite
+    orgId: 1
+    type: graphite
+    url: http://your.graphite.url

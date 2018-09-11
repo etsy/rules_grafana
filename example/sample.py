@@ -5,14 +5,15 @@ dashboard = Dashboard(
     title="Python sample",
     rows=[
         Row(panels=[
+            Text(content="Hello world!"),
             Graph(
                 title="Sample data",
                 targets=[
-                    Target(expr='up{namespace="kube-system"}', ),
+                    Target(),
                 ],
             ),
         ]),
     ],
 )
 
-print_dashboard(dashboard)
+print_dashboard(dashboard.auto_panel_ids())

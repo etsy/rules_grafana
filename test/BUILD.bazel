@@ -1,4 +1,6 @@
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
+load("@io_bazel_rules_grafana//grafana:image.bzl", "grafana_image")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 
 json_dashboards(
     name = "json_dashboards",
@@ -44,4 +46,22 @@ py_test(
     ],
     data = [":dash.generated.json"],
     main = "test.py",
+)
+
+genrule(
+    name = "test_datasources",
+    outs = ['test_datasources.yaml'],
+    cmd = 'touch $(location test_datasources.yaml)',
+)
+
+grafana_image(
+    name = "grafana",
+    dashboards = [":json_dashboards", ":py_dashboards"],
+    datasources = [":test_datasources.yaml"],
+)
+
+container_test(
+    name = "grafana_docker_test",
+    configs = ["docker_tests.yaml"],
+    image = ":grafana",
 )

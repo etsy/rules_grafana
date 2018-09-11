@@ -1,0 +1,30 @@
+# Container Structure Test definition
+# See https://github.com/GoogleCloudPlatform/container-structure-test
+schemaVersion: 2.0.0
+
+fileExistenceTests:
+- name: sample dashboard 1 exists
+  path: /var/lib/grafana/dashboards/no_uid.generated.json
+  shouldExist: true
+- name: sample dashboard 2 exists
+  path: /var/lib/grafana/dashboards/existing_uid.generated.json
+  shouldExist: true
+- name: sample dashboard 3 exists
+  path: /var/lib/grafana/dashboards/dash.generated.json
+  shouldExist: true
+- name: config file exists
+  path: /etc/grafana/grafana.ini
+  shouldExist: true
+- name: datasources provisioning config file exists
+  path: /etc/grafana/provisioning/datasources/test_datasources.yaml
+  shouldExist: true
+- name: dashboards provisioning config file exists
+  path: /etc/grafana/provisioning/dashboards/dashboards.yaml
+  shouldExist: true
+
+fileContentTests:
+- name: sample dashboard has uid
+  path: /var/lib/grafana/dashboards/dash.generated.json
+  expectedContents:
+    - '"uid": "dash_py_json"'
+
