@@ -1,6 +1,8 @@
 # `rules_grafana` for Bazel
 
 Dashboards as code, the [Bazel](https://bazel.build/) way.
+Write Grafana dashboards with Python
+and build them in into a reusable Docker image.
 
 Try it out!  `bazel run //example:grafana` to build and load a Docker image,
 then run it with `docker run --rm -p 3000:3000 bazel/example:grafana`.
@@ -57,7 +59,7 @@ json_dashboards(
 Unlike using the JSON files directly,
 `json_dashboards` will check the syntax of your files
 and ensure that each dashboard has a `uid` set,
-to ensure it has a consistent URL in Grafana.
+to ensure it has a [consistent URL in Grafana](http://docs.grafana.org/administration/provisioning/#reuseable-dashboard-urls).
 
 ### Python dashboards
 
