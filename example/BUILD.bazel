@@ -13,7 +13,7 @@ py_dashboards(
     srcs = glob(["*.py"]),
 )
 
-# Built dashboards can be combined together in a filgroup for easy access:
+# Built dashboards can be combined together in a filegroup for easy access:
 filegroup(
     name = "dashboards",
     srcs = [
