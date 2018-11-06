@@ -19,5 +19,5 @@ def repositories():
         name = "io_bazel_rules_grafana_docker",
         registry = "index.docker.io",
         repository = "grafana/grafana",
-        tag = "5.2.3",
+        tag = "5.3.2",
     )
