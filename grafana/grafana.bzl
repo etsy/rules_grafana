@@ -5,7 +5,7 @@ def _json_dashboard(ctx):
     # Every dashboard must have a unique 'uid' in its JSON.  This is used by Grafana to generate the URL, so we want it
     # to be consistent and predictable over time.  Therefore we generate it from the input path, keeping only URL-valid
     # characters, then inject it into the JSON.
-    uid = ''.join([c if c.isalnum() else '_' for c in ctx.file.src.basename])
+    uid = ''.join([c if c.isalnum() else '_' for c in ctx.file.src.basename.elems()])
     ctx.actions.run_shell(
         inputs = [ctx.file.src],
         outputs = [ctx.outputs.json],
