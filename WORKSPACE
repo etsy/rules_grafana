@@ -23,10 +23,17 @@ load(
 
 container_repositories()
 
-load("@io_bazel_rules_grafana//grafana:workspace.bzl", "repositories")
+load("@io_bazel_rules_grafana//grafana:workspace.bzl", "repositories", "grafana_plugin")
 
 repositories()
 
 load("@io_bazel_rules_grafana_deps//:requirements.bzl", "pip_install")
 
 pip_install()
+
+grafana_plugin(
+    name = "grafana_plotly_plugin",
+    urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.5/download"],
+    type = "zip",
+    sha256 = "ba67afef48c9ce6c96978dd8d7e2ff2dc1f09e6cfd7eccf89bfaaf574347cd52",
+)

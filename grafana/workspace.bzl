@@ -7,6 +7,8 @@ load(
     container_repositories = "repositories",
 )
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 def repositories():
     pip_import(
         name = "io_bazel_rules_grafana_deps",
@@ -20,4 +22,13 @@ def repositories():
         registry = "index.docker.io",
         repository = "grafana/grafana",
         tag = "5.4.2",
+    )
+
+def grafana_plugin(name, urls, sha256, type=None):
+    http_archive(
+        name = name,
+        urls = urls,
+        sha256 = sha256,
+        type = type,
+        build_file_content = "filegroup(name='plugin', srcs=glob(['**/*']), visibility=['//visibility:public'])",
     )
