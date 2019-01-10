@@ -68,3 +68,18 @@ container_test(
     configs = ["docker_tests.yaml"],
     image = ":grafana",
 )
+
+grafana_image(
+    name = "grafana_with_plugins",
+    dashboards = [
+        ":py_dashboards",
+    ],
+    datasources = [":test_datasources.yaml"],
+    plugins = ["@grafana_plotly_plugin//:plugin"],
+)
+
+container_test(
+    name = "grafana_with_plugins_docker_test",
+    configs = ["docker_with_plugins_tests.yaml"],
+    image = ":grafana_with_plugins",
+)

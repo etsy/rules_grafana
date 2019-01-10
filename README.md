@@ -111,6 +111,11 @@ alongside all the dashboards.
 You must provide a `datasources.yaml` file declaring your datasources;
 see the [Grafana datasources docs](http://docs.grafana.org/administration/provisioning/#datasources) for details of the format.
 
+Grafana plugins can be installed into the image too.
+Use the `grafana_plugin` WORKSPACE rule to download the plugin ZIP,
+providing the URL from the "download the .zip file" on the Grafana plugin page's Installation tab.
+Then pass the plugin to the image rule's `plugins` list as `@grafana_plugin_repository_name//:plugin`.
+
 ## API reference
 
 ### `json_dashboards`
@@ -141,3 +146,16 @@ Arguments:
 - `name`: Unique name for this target.  Required.
 - `dashboards`: List of labels of `json_dashboards` and/or `py_dashboards` targets to include in the image.  Required.
 - `datasources`: List of labels of `datasources.yaml` files to include in the image ([Grafana datasources docs](http://docs.grafana.org/administration/provisioning/#datasources)).  Required.
+
+### `grafana_plugin`
+
+Repository rule to download a Grafana plugin for inclusion in a `grafana_image`.
+
+Arguments:
+
+- `name`: Unique name for this target.  Required.
+- `urls`: List of strings of mirror URLs referencing the plugin archive.  Required.
+- `sha256`: String of the expected SHA-256 hash of the download.  Required.
+- `type`: The archive type of the downloaded file as a string;
+          takes the same values as the `type` attribute of Bazel's `http_archive` rule.
+          Optional, as the archive type can be determined from the plugin's file extension.

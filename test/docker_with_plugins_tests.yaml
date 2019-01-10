@@ -1,0 +1,8 @@
+# Container Structure Test definition
+# See https://github.com/GoogleCloudPlatform/container-structure-test
+schemaVersion: 2.0.0
+
+fileExistenceTests:
+- name: plotly plugin exsts
+  path: /var/lib/grafana/plugins/grafana_plotly_plugin/NatelEnergy-grafana-plotly-panel-fd20e71/src/plugin.json
+  shouldExist: true
