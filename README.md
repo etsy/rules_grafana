@@ -146,6 +146,9 @@ Arguments:
 - `name`: Unique name for this target.  Required.
 - `dashboards`: List of labels of `json_dashboards` and/or `py_dashboards` targets to include in the image.  Required.
 - `datasources`: List of labels of `datasources.yaml` files to include in the image ([Grafana datasources docs](http://docs.grafana.org/administration/provisioning/#datasources)).  Required.
+- `plugins`: List of labels of `grafana_plugin` targets, like `@your_repository_name//:plugin`.  Optional.
+- `env`: Dictionary of environment variant names to values, set in the Docker image when Grafana is run.  Optional.
+    Useful for setting runtime configs with `GF_` variables.
 
 ### `grafana_plugin`
 
