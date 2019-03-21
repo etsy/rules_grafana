@@ -1,7 +1,7 @@
 load("@io_bazel_rules_docker//container:image.bzl", "container_image")
 load("@io_bazel_rules_docker//container:layer.bzl", "container_layer")
 
-def grafana_image(name, datasources, dashboards, plugins=[], visibility=None):
+def grafana_image(name, datasources, dashboards, plugins=[], env={}, visibility=None):
     '''
     Builds a Docker image containing Grafana and the provided dashboards and datasources.
     '''
@@ -31,6 +31,13 @@ def grafana_image(name, datasources, dashboards, plugins=[], visibility=None):
         data_path = '.',
     )
 
+    # Copy the env, then add necessary settings:
+    env = dict(**env)
+    env.update({
+        # This must be a writable path:
+        "GF_PATHS_DATA": "/tmp",
+    })
+
     container_image(
         name = name,
         base = "@io_bazel_rules_grafana_docker//image",
@@ -41,10 +48,7 @@ def grafana_image(name, datasources, dashboards, plugins=[], visibility=None):
             "%s_grafana_plugins" % name,
         ],
         directory = "/var/lib/grafana/dashboards/",
-        env = {
-            # This must be a writable path:
-            "GF_PATHS_DATA": "/tmp",
-        },
+        env = env,
         files = dashboards,
         visibility = visibility,
     )
