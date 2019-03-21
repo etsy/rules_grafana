@@ -21,7 +21,7 @@ def repositories():
         name = "io_bazel_rules_grafana_docker",
         registry = "index.docker.io",
         repository = "grafana/grafana",
-        tag = "5.4.2",
+        tag = "6.0.2",
     )
 
 def grafana_plugin(name, urls, sha256, type=None):
