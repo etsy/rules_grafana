@@ -1,0 +1,4 @@
+/bazel-*
+/.ijwb/
+/.idea/
+/grafana/src/
