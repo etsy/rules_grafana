@@ -34,6 +34,10 @@ add them above the previous block:
 - [`rules_python` setup](https://github.com/bazelbuild/rules_python#setup).
 - [`rules_docker` setup](https://github.com/bazelbuild/rules_docker#setup).
 
+## Bazel compatibility
+
+The current version has only been tested to work with Bazel 0.24.1, but may work with other versions.
+
 ## Usage
 
 `rules_grafana` makes it easy to build dashboards and incorporate them into your Bazel build,
