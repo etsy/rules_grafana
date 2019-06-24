@@ -72,6 +72,8 @@ using the [`grafanalib`](https://github.com/weaveworks/grafanalib) library.
 `grafanalib` is automatically imported,
 and you can also add other `deps` to help build your dashboard.
 
+> You can override `grafanalib` with a [different version](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format) via `grafana_repositories(grafanalib_pip_specifier=YOUR_REQUIREMENT)` in your `WORKSPACE`.
+
 Each Python dashboard file should print the complete JSON of a Grafana dashboard.
 An easy way to do that is to follow a template like this:
 
