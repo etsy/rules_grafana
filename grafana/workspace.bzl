@@ -1,5 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
+load("@rules_python//python:pip.bzl", "pip_import")
 load(
     "@io_bazel_rules_docker//repositories:repositories.bzl",
     container_repositories = "repositories",
@@ -8,8 +8,6 @@ load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
 )
-
-pip_repositories()
 
 def _dynamic_requirements_impl(repository_ctx):
     repository_ctx.file("BUILD", "")
