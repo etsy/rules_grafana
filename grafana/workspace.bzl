@@ -20,7 +20,7 @@ _dynamic_requirements = repository_rule(
     },
 )
 
-DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@06d9b338a4fa208ed45961feebf1b7b555abc108#egg=grafanalib"
+DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@7cf8c267756e15d1f50f217a4136de12249a0191#egg=grafanalib"
 
 def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER):
     """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage."""
@@ -28,7 +28,8 @@ def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER):
     # `requirements.txt` for `pip_import` must be a file, so turn the argument into one, then import it.
     _dynamic_requirements(
         name = "io_bazel_rules_grafana_dynamic_requirements",
-        requirements = [grafanalib_pip_specifier],
+        # Pin attrs 19.1 until grafanalib is compatible with 19.2+: https://github.com/weaveworks/grafanalib/pull/180
+        requirements = [grafanalib_pip_specifier, "attrs==19.1"],
     )
     pip_import(
         name = "io_bazel_rules_grafana_deps",

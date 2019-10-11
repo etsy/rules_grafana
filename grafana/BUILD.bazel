@@ -2,6 +2,7 @@ py_binary(
     name = "uid_injector",
     srcs = ["uid_injector.py"],
     visibility = ["//visibility:public"],
+    python_version = "PY3",
 )
 
 exports_files(glob(["config/**"]))

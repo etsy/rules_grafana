@@ -6,4 +6,4 @@ if __name__ == '__main__':
         j = json.load(f)
     if not j.get('uid'):
         j['uid'] = sys.argv[2]
-    print json.dumps(j)
+    print(json.dumps(j))
