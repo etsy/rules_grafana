@@ -36,7 +36,7 @@ add them above the previous block:
 
 ## Bazel compatibility
 
-The current version has only been tested to work with Bazel 0.24.1, but may work with other versions.
+The current version has only been tested to work with Bazel 0.29.1, but may work with other versions.
 
 ## Usage
 

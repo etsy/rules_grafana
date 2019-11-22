@@ -13,6 +13,13 @@ json_dashboards(
 py_dashboards(
     name = "py_dashboards",
     srcs = ["dash.py"],
+    python_version = "PY2",
+)
+
+py_dashboards(
+    name = "py_dashboards_py3",
+    srcs = ["dash_py3.py"],
+    python_version = "PY3",
 )
 
 py_test(
@@ -24,6 +31,8 @@ py_test(
     ],
     data = [":no_uid.generated.json"],
     main = "test.py",
+    python_version = "PY3",
+    srcs_version = "PY3",
 )
 
 py_test(
@@ -35,6 +44,8 @@ py_test(
     ],
     data = [":existing_uid.generated.json"],
     main = "test.py",
+    python_version = "PY3",
+    srcs_version = "PY3",
 )
 
 py_test(
@@ -46,6 +57,8 @@ py_test(
     ],
     data = [":dash.generated.json"],
     main = "test.py",
+    python_version = "PY3",
+    srcs_version = "PY3",
 )
 
 genrule(
@@ -59,6 +72,7 @@ grafana_image(
     dashboards = [
         ":json_dashboards",
         ":py_dashboards",
+        ":py_dashboards_py3",
     ],
     datasources = [":test_datasources.yaml"],
 )
@@ -73,6 +87,7 @@ grafana_image(
     name = "grafana_with_plugins",
     dashboards = [
         ":py_dashboards",
+        ":py_dashboards_py3",
     ],
     datasources = [":test_datasources.yaml"],
     plugins = ["@grafana_plotly_plugin//:plugin"],

@@ -1,5 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("@rules_python//python:pip.bzl", "pip_import")
+load("@rules_python//python:pip.bzl", "pip3_import", "pip_import")
 load(
     "@io_bazel_rules_docker//repositories:repositories.bzl",
     container_repositories = "repositories",
@@ -23,15 +23,24 @@ _dynamic_requirements = repository_rule(
 DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@b0375148133e1f9b0c78777c8ec818cf018235e0#egg=grafanalib"
 
 def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER):
-    """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage."""
+    """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage.
+
+    Args:
+        grafanalib_pip_specifier: dependencies for grafanalib url.
+    """
 
     # `requirements.txt` for `pip_import` must be a file, so turn the argument into one, then import it.
     _dynamic_requirements(
         name = "io_bazel_rules_grafana_dynamic_requirements",
         requirements = [grafanalib_pip_specifier],
     )
+
     pip_import(
         name = "io_bazel_rules_grafana_deps",
+        requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
+    )
+    pip3_import(
+        name = "io_bazel_rules_grafana_deps3",
         requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
     )
 
