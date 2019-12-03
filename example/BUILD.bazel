@@ -11,6 +11,7 @@ json_dashboards(
 py_dashboards(
     name = "py_dashboards",
     srcs = glob(["*.py"]),
+    python_version = "PY2",
 )
 
 # Built dashboards can be combined together in a filegroup for easy access:

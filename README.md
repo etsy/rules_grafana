@@ -22,8 +22,12 @@ git_repository(
 
 load("@io_bazel_rules_grafana//grafana:workspace.bzl", grafana_repositories="repositories")
 grafana_repositories()
-load("@io_bazel_rules_grafana_deps//:requirements.bzl", "pip_install")
-pip_install()
+# load both dependencies for python2 and python3
+load("@io_bazel_rules_grafana_deps//:requirements.bzl", pip_install_grafana = "pip_install")
+load("@io_bazel_rules_grafana_deps3//:requirements.bzl", pip_install_grafana3 = "pip_install")
+
+pip_install_grafana()
+pip_install_grafana3()
 ```
 
 `rules_grafana` also depends on [`rules_python`](https://github.com/bazelbuild/rules_python) and
@@ -36,7 +40,7 @@ add them above the previous block:
 
 ## Bazel compatibility
 
-The current version has only been tested to work with Bazel 0.24.1, but may work with other versions.
+The current version has only been tested to work with Bazel 0.29.1, but may work with other versions.
 
 ## Usage
 
@@ -89,6 +93,7 @@ print_dashboard(dashboard.auto_panel_ids()) # `auto_panel_ids()` call is require
 ```
 
 Use `py_dashboards` to add Python files that generate dashboards to your build.
+You need to set python_version to either `PY2` or `PY3`, depending if you write your code in python2 or python3.
 
 ```
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "py_dashboards")
@@ -96,6 +101,7 @@ load("@io_bazel_rules_grafana//grafana:grafana.bzl", "py_dashboards")
 py_dashboards(
     name = "dashboards",
     srcs = ["amazing_graphs.py", "even_better_graphs.py"],
+    python_version = "PY2",
 )
 ```
 
@@ -140,6 +146,7 @@ Processes a set of `.py` Grafana dashboards for inclusion in the image.
 Arguments:
 
 - `name`: Unique name for this target.  Required.
+- `python_version`: Version of python used.
 - `srcs`: List of labels of `.py` files to build into dashboards.  Required.
 - `deps`: List of labels of additional `py_library` targets to use while executing the Python dashboards.  Optional, default `[]`.
 
