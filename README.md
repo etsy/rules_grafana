@@ -12,7 +12,7 @@ Then load Grafana in your browser at `http://localhost:3000`!
 
 Load `io_bazel_rules_grafana` by adding the following to your `WORKSPACE`:
 
-```
+```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 git_repository(
     name = "io_bazel_rules_grafana",
@@ -55,7 +55,7 @@ Use `json_dashboards` to add JSON files containing dashboard to your build.
 The JSON must be a complete, valid Grafana 5.0 dashboard;
 see the [Grafana docs](http://docs.grafana.org/reference/dashboard/) for details on the JSON format.
 
-```
+```python
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards")
 
 json_dashboards(
@@ -81,7 +81,7 @@ and you can also add other `deps` to help build your dashboard.
 Each Python dashboard file should print the complete JSON of a Grafana dashboard.
 An easy way to do that is to follow a template like this:
 
-```py
+```python
 from grafanalib.core import *
 from grafanalib._gen import print_dashboard
 
@@ -95,7 +95,7 @@ print_dashboard(dashboard.auto_panel_ids()) # `auto_panel_ids()` call is require
 Use `py_dashboards` to add Python files that generate dashboards to your build.
 You need to set python_version to either `PY2` or `PY3`, depending if you write your code in python2 or python3.
 
-```
+```python
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "py_dashboards")
 
 py_dashboards(
