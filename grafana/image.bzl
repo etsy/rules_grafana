@@ -4,6 +4,14 @@ load("@io_bazel_rules_docker//container:layer.bzl", "container_layer")
 def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibility = None):
     """
     Builds a Docker image containing Grafana and the provided dashboards and datasources.
+
+    Args:
+        name: Unique name for this target.
+        datasources: List of labels of `datasources.yaml` files to include in the image.
+        dashboards: List of labels of `json_dashboards` and/or `py_dashboards` targets to include in the image.
+        plugins: List of labels of `grafana_plugin` targets.
+        env: Dictionary of environment variant names to values, set in the Docker image when Grafana is run.
+        visibility: Controls whether the rule can be used by other packages.
     """
     container_layer(
         name = "%s_grafana_etc" % name,

@@ -128,6 +128,29 @@ Use the `grafana_plugin` WORKSPACE rule to download the plugin ZIP,
 providing the URL from the "download the .zip file" on the Grafana plugin page's Installation tab.
 Then pass the plugin to the image rule's `plugins` list as `@grafana_plugin_repository_name//:plugin`.
 
+### Custom grafana image
+
+The default version of grafana shipped with this module may not suit your needs.
+You can use a custom image by setting the `use_custom_container` arg for `repositories()`
+macro and defining a container_pull rule named `io_bazel_rules_grafana_docker`:
+
+```starlark
+load(
+    "@io_bazel_rules_grafana//grafana:workspace.bzl",
+    grafana_repositories = "repositories",
+)
+
+grafana_repositories(use_custom_container = True)
+
+container_pull(
+    name = "io_bazel_rules_grafana_docker",
+    registry = "gcr.io",
+    repository = "etsy-searchinfra-tools-sandbox/grafana",
+    tag = "6.5.2",
+    digest = "sha256:24fcb753c050522ebc36f70873f081ff937f41a6adad133407709513aac3b016",
+)
+```
+
 ## API reference
 
 ### `json_dashboards`

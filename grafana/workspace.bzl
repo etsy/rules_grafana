@@ -20,13 +20,14 @@ _dynamic_requirements = repository_rule(
     },
 )
 
-DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@b0375148133e1f9b0c78777c8ec818cf018235e0#egg=grafanalib"
+DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@cca2907cdaf3fce0d32fe701b5748321a39c5d26#egg=grafanalib"
 
-def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER):
+def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER, use_custom_container = False):
     """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage.
 
     Args:
         grafanalib_pip_specifier: dependencies for grafanalib url.
+        use_custom_container: use a custom container for grafana.
     """
 
     # `requirements.txt` for `pip_import` must be a file, so turn the argument into one, then import it.
@@ -46,13 +47,14 @@ def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER):
 
     container_repositories()
 
-    container_pull(
-        name = "io_bazel_rules_grafana_docker",
-        registry = "index.docker.io",
-        repository = "grafana/grafana",
-        tag = "6.4.4",
-        digest = "sha256:01f35fd54472850715866dfe5e6ec34783064558197a643d5a2b48b7791367dd",
-    )
+    if not use_custom_container:
+        container_pull(
+            name = "io_bazel_rules_grafana_docker",
+            registry = "index.docker.io",
+            repository = "grafana/grafana",
+            tag = "6.4.4",
+            digest = "sha256:01f35fd54472850715866dfe5e6ec34783064558197a643d5a2b48b7791367dd",
+        )
 
 def grafana_plugin(name, urls, sha256, type = None):
     http_archive(
