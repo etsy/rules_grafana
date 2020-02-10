@@ -33,8 +33,8 @@ def repositories(
     Args:
         grafanalib_pip_specifier: dependencies for grafanalib url.
         use_custom_container: use a custom container for grafana.
-        python2_interpreter: path to python2 for pip; set to None to disable python2 support
-        python3_interpreter: path to python3 for pip; set to None to disable python3 support
+        python2_interpreter: path to python2 for pip
+        python3_interpreter: path to python3 for pip
     """
 
     # `requirements.txt` for `pip_import` must be a file, so turn the argument into one, then import it.
@@ -43,18 +43,16 @@ def repositories(
         requirements = [grafanalib_pip_specifier],
     )
 
-    if python2_interpreter:
-        pip_import(
-            name = "io_bazel_rules_grafana_deps",
-            requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
-            python_interpreter = python2_interpreter,
-        )
-    if python3_interpreter:
-        pip_import(
-            name = "io_bazel_rules_grafana_deps3",
-            requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
-            python_interpreter = python3_interpreter,
-        )
+    pip_import(
+        name = "io_bazel_rules_grafana_deps",
+        requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
+        python_interpreter = python2_interpreter,
+    )
+    pip_import(
+        name = "io_bazel_rules_grafana_deps3",
+        requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
+        python_interpreter = python3_interpreter,
+    )
 
     container_repositories()
 
