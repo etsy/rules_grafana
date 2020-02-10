@@ -22,12 +22,19 @@ _dynamic_requirements = repository_rule(
 
 DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@cca2907cdaf3fce0d32fe701b5748321a39c5d26#egg=grafanalib"
 
-def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER, use_custom_container = False):
+def repositories(
+        grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER,
+        use_custom_container = False,
+        python2_interpreter = 'python2',
+        python3_interpreter = 'python3',
+    ):
     """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage.
 
     Args:
         grafanalib_pip_specifier: dependencies for grafanalib url.
         use_custom_container: use a custom container for grafana.
+        python2_interpreter: path to python2 for pip; set to None to disable python2 support
+        python3_interpreter: path to python3 for pip; set to None to disable python3 support
     """
 
     # `requirements.txt` for `pip_import` must be a file, so turn the argument into one, then import it.
@@ -36,14 +43,18 @@ def repositories(grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER, us
         requirements = [grafanalib_pip_specifier],
     )
 
-    pip_import(
-        name = "io_bazel_rules_grafana_deps",
-        requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
-    )
-    pip3_import(
-        name = "io_bazel_rules_grafana_deps3",
-        requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
-    )
+    if python2_interpreter:
+        pip_import(
+            name = "io_bazel_rules_grafana_deps",
+            requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
+            python_interpreter = python2_interpreter,
+        )
+    if python3_interpreter:
+        pip_import(
+            name = "io_bazel_rules_grafana_deps3",
+            requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
+            python_interpreter = python3_interpreter,
+        )
 
     container_repositories()
 

@@ -22,7 +22,9 @@ git_repository(
 
 load("@io_bazel_rules_grafana//grafana:workspace.bzl", grafana_repositories="repositories")
 grafana_repositories()
-# load both dependencies for python2 and python3
+# Load dependencies for python2 and python3.  If you don't use python2, instead call
+#   grafana_repositories(python2_interpreter = None)
+# and skip the load/call of @io_bazel_rules_grafana_deps.
 load("@io_bazel_rules_grafana_deps//:requirements.bzl", pip_install_grafana = "pip_install")
 load("@io_bazel_rules_grafana_deps3//:requirements.bzl", pip_install_grafana3 = "pip_install")
 
@@ -40,7 +42,7 @@ add them above the previous block:
 
 ## Bazel compatibility
 
-The current version has only been tested to work with Bazel 0.29.1, but may work with other versions.
+The current version has only been tested to work with Bazel 2.0.0, but may work with other versions.
 
 ## Usage
 
