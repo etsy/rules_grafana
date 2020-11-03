@@ -1,5 +1,6 @@
-load("@io_bazel_rules_grafana_deps//:requirements.bzl", "requirement")
 load("@io_bazel_rules_grafana_deps3//:requirements.bzl", requirement3 = "requirement")
+
+_PYTHON_VERSION = "PY3"
 
 def _json_dashboard(ctx):
     """Prepares a single .json Grafana dashboard source for inclusion in the image."""
@@ -71,34 +72,27 @@ py_dashboard = rule(
     },
 )
 
-def _py_dashboard_builder(src, python_version, deps = None):
+def _py_dashboard_builder(src, deps = None):
     if deps == None:
         deps = []
     py_binary_name = src.replace(".py", "_builder")
-    grafana_deps = None
-    if python_version == "PY2":
-        grafana_deps = requirement("grafanalib")
-    elif python_version == "PY3":
-        grafana_deps = requirement3("grafanalib")
-    else:
-        fail("Unknown python_version %s. Expecting PY2 or PY3." % python_version)
+    grafana_deps = requirement3("grafanalib")
     native.py_binary(
         name = py_binary_name,
-        python_version = python_version,
-        srcs_version = python_version,
+        python_version = _PYTHON_VERSION,
+        srcs_version = _PYTHON_VERSION,
         srcs = [src],
         deps = [grafana_deps] + deps,
         main = src,
     )
     return ":%s" % py_binary_name
 
-def py_dashboards(name, srcs, python_version, deps = None, visibility = None):
+def py_dashboards(name, srcs, deps = None, visibility = None):
     """Processes a set of .py Grafana dashboards for inclusion in the image.
 
     Args:
         name: rule name.
         srcs: source py files.
-        python_version: version of python to be used to compile the py srcs.
         deps: extra python dependencies needed.
         visibility: controls whether the rule can be used by other packages.
                     Rules are always visible to other rules declared in the same package.
@@ -112,7 +106,7 @@ def py_dashboards(name, srcs, python_version, deps = None, visibility = None):
         # First run the py file through `py_dashboard`, which runs it with the right python deps and produces a file; then
         # run that generated file thorugh `json_dashboard` to ensure it has a `uid` and stuff.
         py_target_name = src.replace(".py", "")
-        py_binary_label = _py_dashboard_builder(src = src, deps = deps, python_version = python_version)
+        py_binary_label = _py_dashboard_builder(src = src, deps = deps)
         py_dashboard(name = py_target_name, builder = py_binary_label)
         targets.append(py_target_name)
     json_dashboards(name = name, srcs = targets, visibility = visibility)
