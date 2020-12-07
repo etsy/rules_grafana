@@ -16,7 +16,10 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
     container_layer(
         name = "%s_grafana_etc" % name,
         directory = "/etc/grafana",
-        files = ["@io_bazel_rules_grafana//grafana:config/grafana.ini"],
+        files = [
+            "@io_bazel_rules_grafana//grafana:config/grafana.ini",
+            "@io_bazel_rules_grafana//grafana:config/entrypoint.sh",
+        ],
     )
 
     container_layer(
@@ -55,6 +58,9 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
             "%s_grafana_datasources_provisioning" % name,
             "%s_grafana_plugins" % name,
         ],
+        # Dashboard files must be writable for entrypoint.sh.
+        mode = "0o666", # octal
+        entrypoint = "/etc/grafana/entrypoint.sh",
         directory = "/var/lib/grafana/dashboards/",
         env = env,
         files = dashboards,
