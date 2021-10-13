@@ -54,8 +54,8 @@ def repositories(
             name = "io_bazel_rules_grafana_docker",
             registry = "index.docker.io",
             repository = "grafana/grafana",
-            tag = "7.4.3",
-            digest = "sha256:848c405bb116d5cb1f9de98ebb6f02aec4fbaa8e624ef3fa8824d28a55c09183"
+            tag = "8.2.1",
+            digest = "sha256:93f69ff2f10a9de94272d8224c0eae8ee698d4f907d0085aa418f51054a082fe"
         )
 
 def grafana_plugin(name, urls, sha256, type = None):
