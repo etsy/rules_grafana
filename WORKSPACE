@@ -12,12 +12,12 @@ git_repository(
     remote = "https://github.com/bazelbuild/rules_python.git",
 )
 
-# rules_docker master on 2020-11-03
-rules_docker_version = "0.15.0"
+# rules_docker updated from 0.15.0 to 0.17.0 due to https://github.com/bazelbuild/rules_docker/issues/1814
+rules_docker_version = "0.17.0"
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "1698624e878b0607052ae6131aa216d45ebb63871ec497f26c67455b34119c80",
+    sha256 = "59d5b42ac315e7eadffa944e86e90c2990110a1c8075f1cd145f487e999d22b3",
     strip_prefix = "rules_docker-%s" % rules_docker_version,
     urls = ["https://github.com/bazelbuild/rules_docker/archive/v%s.tar.gz" % rules_docker_version],
 )
