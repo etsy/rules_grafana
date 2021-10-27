@@ -25,8 +25,7 @@ DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafana
 def repositories(
         grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER,
         use_custom_container = False,
-        python3_interpreter = 'python3',
-    ):
+        python3_interpreter = "python3"):
     """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage.
 
     Args:
@@ -54,8 +53,8 @@ def repositories(
             name = "io_bazel_rules_grafana_docker",
             registry = "index.docker.io",
             repository = "grafana/grafana",
-            tag = "8.2.1",
-            digest = "sha256:93f69ff2f10a9de94272d8224c0eae8ee698d4f907d0085aa418f51054a082fe"
+            tag = "8.2.2",
+            digest = "sha256:66b2b912876e1e195515abe0feff1786e7e827faa5780179b170dbb969595779",
         )
 
 def grafana_plugin(name, urls, sha256, type = None):
