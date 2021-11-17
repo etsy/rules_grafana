@@ -20,7 +20,7 @@ _dynamic_requirements = repository_rule(
     },
 )
 
-DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@df2a8a81634fa029bedc7be18457f89d29b8a577#egg=grafanalib"
+DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@cb8a8f5690d6793a15927b0ac7da94dad41f9c62#egg=grafanalib"
 
 def repositories(
         grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER,
