@@ -12,7 +12,12 @@ dashboard = Dashboard(
                     Target(),
                 ],
             ),
-        ]),
+            TimeSeries(
+                title="Sample data",
+                targets=[
+                    Target(),
+                ],
+            ),        ]),
     ],
 )
 
