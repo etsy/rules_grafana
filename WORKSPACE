@@ -20,7 +20,7 @@ rules_docker_version = "0.22.0"
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "59536e6ae64359b716ba9c46c39183403b01eabfbd57578e84398b4829ca499a",
+    sha256 = "e735c587f8faa7323e5d86c179dd8e07d356dd95dbd3a73fbc653a00fa688d88",
     strip_prefix = "rules_docker-%s" % rules_docker_version,
     type = "zip",
     urls = ["https://github.com/bazelbuild/rules_docker/archive/v%s.zip" % rules_docker_version],
