@@ -10,7 +10,7 @@ load(
 )
 
 DEFAULT_GRAFANA_TAG = "8.5.5"
-DEFAULT_GRAFANA_SHA = "sha256:f247fbae840f874ee3c6c1501f5dde6c768ea07b9893182ebd1f16a10fb725b1"
+DEFAULT_GRAFANA_SHA = "sha256:da4ee228ea2fe65e23faa2cde992283ffba7ed55569fdd9301c5a1feac14c24c"
 
 def _dynamic_requirements_impl(repository_ctx):
     repository_ctx.file("BUILD", "")
