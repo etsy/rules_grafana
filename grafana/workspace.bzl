@@ -9,6 +9,9 @@ load(
     "container_pull",
 )
 
+DEFAULT_GRAFANA_TAG = "8.5.5"
+DEFAULT_GRAFANA_SHA = "sha256:da4ee228ea2fe65e23faa2cde992283ffba7ed55569fdd9301c5a1feac14c24c"
+
 def _dynamic_requirements_impl(repository_ctx):
     repository_ctx.file("BUILD", "")
     repository_ctx.file("requirements.txt", "\n".join(repository_ctx.attr.requirements))
@@ -54,8 +57,8 @@ def repositories(
             name = "io_bazel_rules_grafana_docker",
             registry = "index.docker.io",
             repository = "grafana/grafana",
-            tag = "8.2.2",
-            digest = "sha256:66b2b912876e1e195515abe0feff1786e7e827faa5780179b170dbb969595779",
+            tag = DEFAULT_GRAFANA_TAG,
+            digest = DEFAULT_GRAFANA_SHA,
         )
 
 def grafana_plugin(name, urls, sha256, type = None):
