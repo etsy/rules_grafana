@@ -9,8 +9,8 @@ load(
     "container_pull",
 )
 
-DEFAULT_GRAFANA_TAG = "8.5.5"
-DEFAULT_GRAFANA_SHA = "sha256:da4ee228ea2fe65e23faa2cde992283ffba7ed55569fdd9301c5a1feac14c24c"
+DEFAULT_GRAFANA_TAG = "9.1.1"
+DEFAULT_GRAFANA_SHA = "sha256:bd46093a1c8b7e383a82ba0c4abeb0935e828a7580648833d1c9ae047b364cef"
 
 def _dynamic_requirements_impl(repository_ctx):
     repository_ctx.file("BUILD", "")
@@ -23,8 +23,8 @@ _dynamic_requirements = repository_rule(
     },
 )
 
-# release 0.6.2
-DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@7c1790eb68c4acca7de510067319d5e3e78654b5#egg=grafanalib"
+# release 0.6.3
+DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafanalib.git@49108269173e399cb4dde2812a1007aacca9e2ae#egg=grafanalib"
 
 def repositories(
         grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER,
