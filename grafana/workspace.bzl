@@ -29,13 +29,15 @@ DEFAULT_GRAFANALIB_PIP_SPECIFIER = "-e git+https://github.com/weaveworks/grafana
 def repositories(
         grafanalib_pip_specifier = DEFAULT_GRAFANALIB_PIP_SPECIFIER,
         use_custom_container = False,
-        python3_interpreter = "python3"):
+        python_interpreter = "python3",
+        python_interpreter_target = None):
     """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage.
 
     Args:
         grafanalib_pip_specifier: dependencies for grafanalib url.
         use_custom_container: use a custom container for grafana.
-        python3_interpreter: path to python3 for pip
+        python_interpreter: path to python3 for pip
+        python_interpreter_target: a bazel target to use for python3 interpreter
     """
 
     # `requirements.txt` for `pip_import` must be a file, so turn the argument into one, then import it.
@@ -47,7 +49,8 @@ def repositories(
     pip_install(
         name = "io_bazel_rules_grafana_deps3",
         requirements = "@io_bazel_rules_grafana_dynamic_requirements//:requirements.txt",
-        python_interpreter = python3_interpreter,
+        python_interpreter = python_interpreter,
+        python_interpreter_target = python_interpreter_target,
     )
 
     container_repositories()
