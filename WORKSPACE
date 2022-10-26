@@ -15,13 +15,26 @@ http_archive(
 load("@rules_python//python:repositories.bzl", "python_register_toolchains")
 
 python_register_toolchains(
-    name = "python3_9",
+    name = "python39",
     python_version = "3.9",
 )
 
+load("@python39//:defs.bzl", python_interpreter = "interpreter")
 load("@rules_python//python/pip_install:repositories.bzl", "pip_install_dependencies")
 
 pip_install_dependencies()
+
+load("@rules_python//python:pip.bzl", "pip_parse")
+
+pip_parse(
+    name = "io_bazel_rules_grafana_deps3",
+    python_interpreter_target = python_interpreter,
+    requirements_lock = "//grafana:requirements.txt",
+)
+
+load("@io_bazel_rules_grafana_deps3//:requirements.bzl", install_deps_grafanalib = "install_deps")
+
+install_deps_grafanalib()
 
 # rules_docker
 rules_docker_version = "0.22.0"
