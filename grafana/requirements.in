@@ -1,0 +1,2 @@
+# run `bazel run //grafana:requirements.update` when youn update this file
+-e git+https://github.com/weaveworks/grafanalib.git@b547a0bc879cf46fbd6bd67b66115509c0dda513#egg=grafanalib

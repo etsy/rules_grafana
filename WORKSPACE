@@ -3,17 +3,25 @@ workspace(name = "io_bazel_rules_grafana")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # rules_python
-rules_python_version = "0.6.0"
+rules_python_version = "0.13.0"
 
 http_archive(
     name = "rules_python",
-    sha256 = "8911e8a96ad591afded29c90c1ce4341c988f8e41b1a469c7fb593bd6025e193",
-    strip_prefix = "rules_python-%s" % rules_python_version,
-    type = "zip",
-    urls = [
-        "https://github.com/bazelbuild/rules_python/archive/%s.zip" % rules_python_version,
-    ],
+    sha256 = "090bfe913d05878db759cdab77061042ff826c3a96b8853aa695405f8c992af5",
+    strip_prefix = "rules_python-{version}".format(version = rules_python_version),
+    url = "https://github.com/bazelbuild/rules_python/archive/{}.zip".format(rules_python_version),
 )
+
+load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+
+python_register_toolchains(
+    name = "python3_9",
+    python_version = "3.9",
+)
+
+load("@rules_python//python/pip_install:repositories.bzl", "pip_install_dependencies")
+
+pip_install_dependencies()
 
 # rules_docker
 rules_docker_version = "0.22.0"
