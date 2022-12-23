@@ -27,7 +27,7 @@ json_dashboard = rule(
         "_uid_injector": attr.label(
             default = "@io_bazel_rules_grafana//grafana:uid_injector",
             executable = True,
-            cfg = "host",
+            cfg = "exec",
         ),
     },
     outputs = {
@@ -62,8 +62,7 @@ py_dashboard = rule(
     attrs = {
         "builder": attr.label(
             executable = True,
-            # TODO move to cfg ="host" when entire project is PY3
-            cfg = "target",
+            cfg = "exec",
             allow_files = True,
         ),
     },
