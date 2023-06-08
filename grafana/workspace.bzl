@@ -2,8 +2,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories = "repositories")
 
-DEFAULT_GRAFANA_TAG = "9.1.1"
-DEFAULT_GRAFANA_SHA = "sha256:bd46093a1c8b7e383a82ba0c4abeb0935e828a7580648833d1c9ae047b364cef"
+DEFAULT_GRAFANA_TAG = "9.5.3"
+DEFAULT_GRAFANA_SHA = "sha256:2bb250738e77723217ecc6f903907f23a7235a59ef10f233440f66f13246019b"
 
 def repositories(use_custom_container = False):
     """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage.
