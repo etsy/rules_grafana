@@ -1,6 +1,7 @@
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
 load("@io_bazel_rules_grafana//grafana:image.bzl", "grafana_image")
-load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("@rules_python//python:defs.bzl", "py_test")
 
 json_dashboards(
     name = "json_dashboards",

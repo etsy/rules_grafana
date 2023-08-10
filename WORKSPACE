@@ -2,49 +2,56 @@ workspace(name = "io_bazel_rules_grafana")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# bazel_skylib released 2023.05.31
+bazel_skylib_version = "1.4.2"
+
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa",
+    url = "https://github.com/bazelbuild/bazel-skylib/releases/download/%s/bazel-skylib-%s.tar.gz" % (bazel_skylib_version, bazel_skylib_version),
+)
+# end bazel_skylib
+
 # rules_python
-rules_python_version = "0.13.0"
+rules_python_version = "0.24.0"
 
 http_archive(
     name = "rules_python",
-    sha256 = "090bfe913d05878db759cdab77061042ff826c3a96b8853aa695405f8c992af5",
+    sha256 = "277eda8a22387cb7660b33bab49a3c921574025c46660ac61453e2af7616e6d1",
     strip_prefix = "rules_python-{version}".format(version = rules_python_version),
+    type = "zip",
     url = "https://github.com/bazelbuild/rules_python/archive/{}.zip".format(rules_python_version),
 )
 
 load("@rules_python//python:repositories.bzl", "python_register_toolchains")
 
 python_register_toolchains(
-    name = "python39",
-    python_version = "3.9",
+    name = "python_3_11",
+    python_version = "3.11",
 )
 
-load("@python39//:defs.bzl", python_interpreter = "interpreter")
-load("@rules_python//python/pip_install:repositories.bzl", "pip_install_dependencies")
-
-pip_install_dependencies()
-
+load("@python_3_11//:defs.bzl", "interpreter")
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
-    name = "io_bazel_rules_grafana_deps3",
-    python_interpreter_target = python_interpreter,
+    name = "io_bazel_rules_grafana_deps",
+    python_interpreter_target = interpreter,
     requirements_lock = "//grafana:requirements.txt",
 )
 
-load("@io_bazel_rules_grafana_deps3//:requirements.bzl", install_deps_grafanalib = "install_deps")
+load("@io_bazel_rules_grafana_deps//:requirements.bzl", install_deps_grafanalib = "install_deps")
 
 install_deps_grafanalib()
 
 # rules_docker
-rules_docker_version = "0.22.0"
+rules_docker_version = "0.25.0"
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "e735c587f8faa7323e5d86c179dd8e07d356dd95dbd3a73fbc653a00fa688d88",
+    sha256 = "07ee8ca536080f5ebab6377fc6e8920e9a761d2ee4e64f0f6d919612f6ab56aa",
     strip_prefix = "rules_docker-%s" % rules_docker_version,
-    type = "zip",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/v%s.zip" % rules_docker_version],
+    type = "tar.gz",
+    urls = ["https://github.com/bazelbuild/rules_docker/archive/v%s.tar.gz" % rules_docker_version],
 )
 
 load(
@@ -69,7 +76,7 @@ repositories()
 
 grafana_plugin(
     name = "grafana_plotly_plugin",
-    sha256 = "ba67afef48c9ce6c96978dd8d7e2ff2dc1f09e6cfd7eccf89bfaaf574347cd52",
+    sha256 = "64c5dc82d5b95134df40daeb90be7e4516f3f128a5ef48561edb730cc37c5f1e",
     type = "zip",
-    urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.5/download"],
+    urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.6/download"],
 )

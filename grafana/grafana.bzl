@@ -1,6 +1,5 @@
-load("@io_bazel_rules_grafana_deps3//:requirements.bzl", requirement3 = "requirement")
-
-_PYTHON_VERSION = "PY3"
+load("@io_bazel_rules_grafana_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
 
 def _json_dashboard(ctx):
     """Prepares a single .json Grafana dashboard source for inclusion in the image."""
@@ -75,11 +74,11 @@ def _py_dashboard_builder(src, deps = None):
     if deps == None:
         deps = []
     py_binary_name = src.replace(".py", "_builder")
-    grafana_deps = requirement3("grafanalib")
-    native.py_binary(
+    grafana_deps = requirement("grafanalib")
+    py_binary(
         name = py_binary_name,
-        python_version = _PYTHON_VERSION,
-        srcs_version = _PYTHON_VERSION,
+        python_version = "PY3",
+        srcs_version = "PY3",
         srcs = [src],
         deps = [grafana_deps] + deps,
         main = src,
@@ -108,4 +107,5 @@ def py_dashboards(name, srcs, deps = None, visibility = None):
         py_binary_label = _py_dashboard_builder(src = src, deps = deps)
         py_dashboard(name = py_target_name, builder = py_binary_label)
         targets.append(py_target_name)
+
     json_dashboards(name = name, srcs = targets, visibility = visibility)
