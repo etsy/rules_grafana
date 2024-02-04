@@ -43,30 +43,52 @@ load("@io_bazel_rules_grafana_deps//:requirements.bzl", install_deps_grafanalib 
 
 install_deps_grafanalib()
 
-# rules_docker
-rules_docker_version = "0.25.0"
-
+# rules_oci
 http_archive(
-    name = "io_bazel_rules_docker",
-    sha256 = "07ee8ca536080f5ebab6377fc6e8920e9a761d2ee4e64f0f6d919612f6ab56aa",
-    strip_prefix = "rules_docker-%s" % rules_docker_version,
-    type = "tar.gz",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/v%s.tar.gz" % rules_docker_version],
+    name = "rules_oci",
+    sha256 = "6ae66ccc6261d3d297fef1d830a9bb852ddedd3920bbd131021193ea5cb5af77",
+    strip_prefix = "rules_oci-1.7.0",
+    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.7.0/rules_oci-v1.7.0.tar.gz",
 )
 
-load(
-    "@io_bazel_rules_docker//repositories:repositories.bzl",
-    container_repositories = "repositories",
+load("@rules_oci//oci:dependencies.bzl", "rules_oci_dependencies")
+
+rules_oci_dependencies()
+
+load("@rules_oci//oci:repositories.bzl", "LATEST_CRANE_VERSION", "oci_register_toolchains")
+
+oci_register_toolchains(
+    name = "oci",
+    crane_version = LATEST_CRANE_VERSION,
+)
+# end rules_oci
+
+# rules_pkg
+http_archive(
+    name = "rules_pkg",
+    sha256 = "e93b7309591cabd68828a1bcddade1c158954d323be2205063e718763627682a",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.10.0/rules_pkg-0.10.0.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/0.10.0/rules_pkg-0.10.0.tar.gz",
+    ],
 )
 
-container_repositories()
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
-load(
-    "@io_bazel_rules_docker//repositories:go_repositories.bzl",
-    container_go_deps = "go_deps",
+rules_pkg_dependencies()
+# end rules_pkg
+
+# container_structure_test
+http_archive(
+    name = "container_structure_test",
+    sha256 = "2da13da4c4fec9d4627d4084b122be0f4d118bd02dfa52857ff118fde88e4faa",
+    strip_prefix = "container-structure-test-1.16.0",
+    urls = ["https://github.com/GoogleContainerTools/container-structure-test/archive/v1.16.0.zip"],
 )
 
-container_go_deps()
+load("@container_structure_test//:repositories.bzl", "container_structure_test_register_toolchain")
+
+container_structure_test_register_toolchain(name = "container_structure_test_toolchain")
 
 # end external rules
 

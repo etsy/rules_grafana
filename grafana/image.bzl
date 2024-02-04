@@ -1,5 +1,5 @@
-load("@io_bazel_rules_docker//container:image.bzl", "container_image")
-load("@io_bazel_rules_docker//container:layer.bzl", "container_layer")
+load("@rules_oci//oci:defs.bzl", "oci_image")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
 def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibility = None):
     """
@@ -13,33 +13,41 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
         env: Dictionary of environment variant names to values, set in the Docker image when Grafana is run.
         visibility: Controls whether the rule can be used by other packages.
     """
-    container_layer(
+    pkg_tar(
         name = "%s_grafana_etc" % name,
-        directory = "/etc/grafana",
-        files = [
+        package_dir = "/etc/grafana",
+        srcs = [
             "@io_bazel_rules_grafana//grafana:config/grafana.ini",
             "@io_bazel_rules_grafana//grafana:config/entrypoint.sh",
         ],
     )
 
-    container_layer(
+    pkg_tar(
         name = "%s_grafana_dashboards_provisioning" % name,
-        directory = "/etc/grafana/provisioning/dashboards/",
-        files = ["@io_bazel_rules_grafana//grafana:config/provisioning/dashboards.yaml"],
+        package_dir = "/etc/grafana/provisioning/dashboards/",
+        srcs = ["@io_bazel_rules_grafana//grafana:config/provisioning/dashboards.yaml"],
     )
 
-    container_layer(
+    pkg_tar(
         name = "%s_grafana_datasources_provisioning" % name,
-        directory = "/etc/grafana/provisioning/datasources/",
-        files = datasources,
+        package_dir = "/etc/grafana/provisioning/datasources/",
+        srcs = datasources,
     )
 
-    container_layer(
+    pkg_tar(
         name = "%s_grafana_plugins" % name,
-        # Extra trailing plugins/ dir with data_path is required to preserve plugin structure.
-        directory = "/var/lib/grafana/plugins/plugins/",
-        files = plugins,
-        data_path = ".",
+        package_dir = "/var/lib/grafana/plugins/",
+        # rules_docker directory structure did not include external directory.
+        strip_prefix = "/external",
+        srcs = plugins,
+    )
+
+    pkg_tar(
+        name = "%s_dashboards" % name,
+        # Dashboard files must be writable for entrypoint.sh.
+        mode = "0o666",  # octal
+        package_dir = "/var/lib/grafana/dashboards/",
+        srcs = dashboards,
     )
 
     # Copy the env, then add necessary settings:
@@ -49,20 +57,17 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
         "GF_PATHS_DATA": "/tmp",
     })
 
-    container_image(
+    oci_image(
         name = name,
-        base = "@io_bazel_rules_grafana_docker//image",
-        layers = [
+        base = "@io_bazel_rules_grafana_docker",
+        tars = [
             "%s_grafana_etc" % name,
             "%s_grafana_dashboards_provisioning" % name,
             "%s_grafana_datasources_provisioning" % name,
             "%s_grafana_plugins" % name,
+            "%s_dashboards" % name,
         ],
-        # Dashboard files must be writable for entrypoint.sh.
-        mode = "0o666", # octal
-        entrypoint = "/etc/grafana/entrypoint.sh",
-        directory = "/var/lib/grafana/dashboards/",
+        entrypoint = ["/etc/grafana/entrypoint.sh"],
         env = env,
-        files = dashboards,
         visibility = visibility,
     )
