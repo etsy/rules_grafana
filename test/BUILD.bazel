@@ -1,7 +1,8 @@
-load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("@container_structure_test//:defs.bzl", "container_structure_test")
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
 load("@io_bazel_rules_grafana//grafana:image.bzl", "grafana_image")
 load("@rules_python//python:defs.bzl", "py_test")
+load("@rules_oci//oci:defs.bzl", "oci_tarball")
 
 json_dashboards(
     name = "json_dashboards",
@@ -70,7 +71,13 @@ grafana_image(
     datasources = [":test_datasources.yaml"],
 )
 
-container_test(
+oci_tarball(
+    name = "grafana_tarball",
+    image = ":grafana",
+    repo_tags = ["grafana:latest"],
+)
+
+container_structure_test(
     name = "grafana_docker_test",
     configs = ["docker_tests.yaml"],
     image = ":grafana",
@@ -85,7 +92,13 @@ grafana_image(
     plugins = ["@grafana_plotly_plugin//:plugin"],
 )
 
-container_test(
+oci_tarball(
+    name = "grafana_with_plugins_tarball",
+    image = ":grafana_with_plugins",
+    repo_tags = ["grafana_with_plugins:latest"],
+)
+
+container_structure_test(
     name = "grafana_with_plugins_docker_test",
     configs = ["docker_with_plugins_tests.yaml"],
     image = ":grafana_with_plugins",
