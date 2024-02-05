@@ -1,5 +1,5 @@
 load("@rules_oci//oci:defs.bzl", "oci_image")
-load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@rules_pkg_grafana//pkg:tar.bzl", "pkg_tar")
 
 def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibility = None):
     """
@@ -15,6 +15,7 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
     """
     pkg_tar(
         name = "%s_grafana_etc" % name,
+        allow_duplicates_with_different_content = False,
         package_dir = "/etc/grafana",
         srcs = [
             "@io_bazel_rules_grafana//grafana:config/grafana.ini",
@@ -24,18 +25,21 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
 
     pkg_tar(
         name = "%s_grafana_dashboards_provisioning" % name,
+        allow_duplicates_with_different_content = False,
         package_dir = "/etc/grafana/provisioning/dashboards/",
         srcs = ["@io_bazel_rules_grafana//grafana:config/provisioning/dashboards.yaml"],
     )
 
     pkg_tar(
         name = "%s_grafana_datasources_provisioning" % name,
+        allow_duplicates_with_different_content = False,
         package_dir = "/etc/grafana/provisioning/datasources/",
         srcs = datasources,
     )
 
     pkg_tar(
         name = "%s_grafana_plugins" % name,
+        allow_duplicates_with_different_content = False,
         package_dir = "/var/lib/grafana/plugins/",
         # rules_docker directory structure did not include external directory.
         strip_prefix = "/external",
@@ -44,9 +48,12 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
 
     pkg_tar(
         name = "%s_dashboards" % name,
+        allow_duplicates_with_different_content = False,
         # Dashboard files must be writable for entrypoint.sh.
         mode = "0o666",  # octal
         package_dir = "/var/lib/grafana/dashboards/",
+        # If strip prefix is not set, directory structure is flattened which we don't want.
+        strip_prefix = ".",
         srcs = dashboards,
     )
 

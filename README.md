@@ -25,12 +25,12 @@ grafana_repositories()
 ```
 
 `rules_grafana` also depends on [`rules_python`](https://github.com/bazelbuild/rules_python) and
-[`rules_docker`](https://github.com/bazelbuild/rules_docker).
+[`rules_oci`](https://github.com/bazel-contrib/rules_oci?tab=readme-ov-file#installation).
 If you don't already have these libraries in your `WORKSPACE`,
 add them above the previous block:
 
 - [`rules_python` setup](https://github.com/bazelbuild/rules_python#setup).
-- [`rules_docker` setup](https://github.com/bazelbuild/rules_docker#setup).
+- [`rules_oci` setup](https://github.com/bazel-contrib/rules_oci?tab=readme-ov-file#installation).
 
 ## Bazel compatibility
 
