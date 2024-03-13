@@ -1,8 +1,8 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@rules_oci//oci:pull.bzl", "oci_pull")
 
-DEFAULT_GRAFANA_TAG = "10.0.3"
-DEFAULT_GRAFANA_SHA = "sha256:da34adacd374f6a4d539669a8d5dbda781aa004d429b2058aba9434a9224a04b"
+DEFAULT_GRAFANA_TAG = "10.4.0"
+DEFAULT_GRAFANA_SHA = "sha256:c7ae30e06ee76656f4faf37df1f0d0dfb6941a706b66800a7b289a304d31d771"
 
 def repositories(use_custom_container = False):
     """Defines WORKSPACE requirements for `rules_grafana`.  See README.md for detailed usage.
