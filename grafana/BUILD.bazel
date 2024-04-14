@@ -4,10 +4,13 @@ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 py_binary(
     name = "uid_injector",
     srcs = ["uid_injector.py"],
-    python_version = "PY3",
     visibility = ["//visibility:public"],
 )
 
-compile_pip_requirements(name = "requirements")
+compile_pip_requirements(
+    name = "requirements",
+    requirements_in = "requirements.in",
+    requirements_txt = "requirements.txt",
+)
 
 exports_files(glob(["config/**"]))
