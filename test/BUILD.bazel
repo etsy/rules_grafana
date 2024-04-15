@@ -1,8 +1,8 @@
 load("@container_structure_test//:defs.bzl", "container_structure_test")
 load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
 load("@io_bazel_rules_grafana//grafana:image.bzl", "grafana_image")
-load("@rules_python//python:defs.bzl", "py_test")
 load("@rules_oci//oci:defs.bzl", "oci_tarball")
+load("@rules_python//python:defs.bzl", "py_test")
 
 json_dashboards(
     name = "json_dashboards",
@@ -26,8 +26,6 @@ py_test(
     ],
     data = [":no_uid.generated.json"],
     main = "test.py",
-    python_version = "PY3",
-    srcs_version = "PY3",
 )
 
 py_test(
@@ -39,8 +37,6 @@ py_test(
     ],
     data = [":existing_uid.generated.json"],
     main = "test.py",
-    python_version = "PY3",
-    srcs_version = "PY3",
 )
 
 py_test(
@@ -52,8 +48,6 @@ py_test(
     ],
     data = [":dash.generated.json"],
     main = "test.py",
-    python_version = "PY3",
-    srcs_version = "PY3",
 )
 
 genrule(

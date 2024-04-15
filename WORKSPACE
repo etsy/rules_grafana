@@ -2,29 +2,27 @@ workspace(name = "io_bazel_rules_grafana")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# bazel_skylib released 2023.05.31
-bazel_skylib_version = "1.4.2"
+bazel_skylib_version = "1.5.0"
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa",
+    sha256 = "cd55a062e763b9349921f0f5db8c3933288dc8ba4f76dd9416aac68acee3cb94",
     url = "https://github.com/bazelbuild/bazel-skylib/releases/download/%s/bazel-skylib-%s.tar.gz" % (bazel_skylib_version, bazel_skylib_version),
 )
-# end bazel_skylib
 
 # rules_python
-rules_python_version = "0.24.0"
+rules_python_version = "0.31.0"
 
 http_archive(
     name = "rules_python",
-    sha256 = "277eda8a22387cb7660b33bab49a3c921574025c46660ac61453e2af7616e6d1",
+    sha256 = "9110e83a233c9edce177241f3ae95eae4e4cc3b602d845878d76ad4e3bab7c60",
     strip_prefix = "rules_python-{version}".format(version = rules_python_version),
     type = "zip",
     url = "https://github.com/bazelbuild/rules_python/archive/{}.zip".format(rules_python_version),
 )
 
-load("@rules_python//python:repositories.bzl", "python_register_toolchains")
-
+load("@rules_python//python:repositories.bzl", "py_repositories", "python_register_toolchains")
+py_repositories()
 python_register_toolchains(
     name = "python_3_11",
     python_version = "3.11",
@@ -46,9 +44,9 @@ install_deps_grafanalib()
 # rules_oci
 http_archive(
     name = "rules_oci",
-    sha256 = "6ae66ccc6261d3d297fef1d830a9bb852ddedd3920bbd131021193ea5cb5af77",
-    strip_prefix = "rules_oci-1.7.0",
-    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.7.0/rules_oci-v1.7.0.tar.gz",
+    sha256 = "56d5499025d67a6b86b2e6ebae5232c72104ae682b5a21287770bd3bf0661abf",
+    strip_prefix = "rules_oci-1.7.5",
+    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.7.5/rules_oci-v1.7.5.tar.gz",
 )
 
 load("@rules_oci//oci:dependencies.bzl", "rules_oci_dependencies")
@@ -98,7 +96,7 @@ repositories()
 
 grafana_plugin(
     name = "grafana_plotly_plugin",
-    sha256 = "64c5dc82d5b95134df40daeb90be7e4516f3f128a5ef48561edb730cc37c5f1e",
+    sha256 = "818ab33b42a1421b561f4e44f0cd19cd1a56767d3952045b8042a4da58bd470e",
     type = "zip",
-    urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.6/download"],
+    urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.7/download"],
 )
