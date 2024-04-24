@@ -77,8 +77,6 @@ def _py_dashboard_builder(src, deps = None):
     grafana_deps = requirement("grafanalib")
     py_binary(
         name = py_binary_name,
-        python_version = "PY3",
-        srcs_version = "PY3",
         srcs = [src],
         deps = [grafana_deps] + deps,
         main = src,

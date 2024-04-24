@@ -52,8 +52,6 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
         # Dashboard files must be writable for entrypoint.sh.
         mode = "0o666",  # octal
         package_dir = "/var/lib/grafana/dashboards/",
-        # If strip prefix is not set, directory structure is flattened which we don't want.
-        strip_prefix = ".",
         srcs = dashboards,
     )
 
