@@ -1,4 +1,4 @@
-load("@io_bazel_rules_grafana_deps//:requirements.bzl", "requirement")
+load("@rules_grafana_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary")
 
 def _json_dashboard(ctx):
@@ -24,7 +24,7 @@ json_dashboard = rule(
             allow_single_file = [".json"],
         ),
         "_uid_injector": attr.label(
-            default = "@io_bazel_rules_grafana//grafana:uid_injector",
+            default = "@rules_grafana//grafana:uid_injector",
             executable = True,
             cfg = "exec",
         ),

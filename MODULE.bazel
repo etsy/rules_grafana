@@ -1,6 +1,38 @@
-###############################################################################
-# Bazel now uses Bzlmod by default to manage external dependencies.
-# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
-#
-# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
-###############################################################################
+module(
+    name = "rules_grafana",
+    version = "1.0.0",
+    bazel_compatibility = [">=7.0.0"],
+    compatibility_level = 1,
+)
+
+bazel_dep(name = "aspect_bazel_lib", version = "2.20.0")
+bazel_dep(name = "bazel_skylib", version = "1.8.1")
+bazel_dep(name = "container_structure_test", version = "1.19.1")
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "rules_oci", version = "2.2.0")
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+bazel_dep(name = "rules_python", version = "0.38.0")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    configure_coverage_tool = True,
+    python_version = "3.11.8",
+)
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "rules_grafana_deps",
+    python_version = "3.11.8",
+    requirements_lock = "//grafana:requirements.txt",
+)
+use_repo(pip, "rules_grafana_deps")
+
+# Grafana extension for plugins and container setup
+grafana_ext = use_extension("//grafana:extensions.bzl", "grafana")
+grafana_ext.plugin(
+    name = "grafana_plotly_plugin",
+    urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.7/download"],
+    sha256 = "818ab33b42a1421b561f4e44f0cd19cd1a56767d3952045b8042a4da58bd470e",
+    type = "zip",
+)
+use_repo(grafana_ext, "grafana_oci", "grafana_plotly_plugin")

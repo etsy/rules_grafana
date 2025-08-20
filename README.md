@@ -10,31 +10,32 @@ Then load Grafana in your browser at `http://localhost:3000`!
 
 ## Installing
 
-Load `io_bazel_rules_grafana` by adding the following to your `WORKSPACE`:
+Load `rules_grafana` by adding the following to your `MODULE.bazel`:
 
-```python
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-git_repository(
-    name = "io_bazel_rules_grafana",
-    commit = "{HEAD}", # replace with a real commit hash
-    remote = "https://github.com/etsy/rules_grafana.git",
+```starlark
+bazel_dep(name = "rules_grafana", version = "1.0.0")
+
+# For plugins and container setup
+grafana_ext = use_extension("@rules_grafana//grafana:extensions.bzl", "grafana")
+use_repo(grafana_ext, "grafana_oci")
+
+# Optional: Add plugins
+grafana_ext.plugin(
+    name = "my_plugin",
+    urls = ["https://grafana.com/api/plugins/my-plugin/versions/1.0.0/download"],
+    sha256 = "...",
+    type = "zip",
 )
-
-load("@io_bazel_rules_grafana//grafana:workspace.bzl", grafana_repositories="repositories")
-grafana_repositories()
+use_repo(grafana_ext, "my_plugin")
 ```
 
-`rules_grafana` also depends on [`rules_python`](https://github.com/bazelbuild/rules_python) and
-[`rules_oci`](https://github.com/bazel-contrib/rules_oci?tab=readme-ov-file#installation).
-If you don't already have these libraries in your `WORKSPACE`,
-add them above the previous block:
-
-- [`rules_python` setup](https://github.com/bazelbuild/rules_python#setup).
-- [`rules_oci` setup](https://github.com/bazel-contrib/rules_oci?tab=readme-ov-file#installation).
+`rules_grafana` depends on [`rules_python`](https://github.com/bazelbuild/rules_python) and
+[`rules_oci`](https://github.com/bazel-contrib/rules_oci), but these are automatically managed
+through Bazel's module system.
 
 ## Bazel compatibility
 
-The current version has only been tested to work with Bazel 2.0.0, but may work with other versions.
+Requires Bazel 7.0.0 or later with bzlmod enabled.
 
 ## Usage
 
@@ -46,11 +47,11 @@ Dashboards can be either hard-coded JSON files or Python scripts that generate d
 ### JSON dashboards
 
 Use `json_dashboards` to add JSON files containing dashboard to your build.
-The JSON must be a complete, valid Grafana 5.0 dashboard;
+The JSON must be a complete, valid Grafana dashboard;
 see the [Grafana docs](http://docs.grafana.org/reference/dashboard/) for details on the JSON format.
 
 ```python
-load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards")
+load("@rules_grafana//grafana:grafana.bzl", "json_dashboards")
 
 json_dashboards(
     name = "dashboards",
@@ -70,8 +71,6 @@ using the [`grafanalib`](https://github.com/weaveworks/grafanalib) library.
 `grafanalib` is automatically imported,
 and you can also add other `deps` to help build your dashboard.
 
-> You can override `grafanalib` with a [different version](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format) via `grafana_repositories(grafanalib_pip_specifier=YOUR_REQUIREMENT)` in your `WORKSPACE`.
-
 Each Python dashboard file should print the complete JSON of a Grafana dashboard.
 An easy way to do that is to follow a template like this:
 
@@ -87,15 +86,13 @@ print_dashboard(dashboard.auto_panel_ids()) # `auto_panel_ids()` call is require
 ```
 
 Use `py_dashboards` to add Python files that generate dashboards to your build.
-You need to set python_version to either `PY2` or `PY3`, depending if you write your code in python2 or python3.
 
 ```python
-load("@io_bazel_rules_grafana//grafana:grafana.bzl", "py_dashboards")
+load("@rules_grafana//grafana:grafana.bzl", "py_dashboards")
 
 py_dashboards(
     name = "dashboards",
     srcs = ["amazing_graphs.py", "even_better_graphs.py"],
-    python_version = "PY2",
 )
 ```
 
@@ -118,32 +115,26 @@ You must provide a `datasources.yaml` file declaring your datasources;
 see the [Grafana datasources docs](http://docs.grafana.org/administration/provisioning/#datasources) for details of the format.
 
 Grafana plugins can be installed into the image too.
-Use the `grafana_plugin` WORKSPACE rule to download the plugin ZIP,
-providing the URL from the "download the .zip file" on the Grafana plugin page's Installation tab.
-Then pass the plugin to the image rule's `plugins` list as `@grafana_plugin_repository_name//:plugin`.
+Use the `grafana` module extension to download plugins:
+
+```starlark
+# In your MODULE.bazel
+grafana_ext = use_extension("@rules_grafana//grafana:extensions.bzl", "grafana")
+grafana_ext.plugin(
+    name = "grafana_plotly_plugin",
+    urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.7/download"],
+    sha256 = "818ab33b42a1421b561f4e44f0cd19cd1a56767d3952045b8042a4da58bd470e",
+    type = "zip",
+)
+use_repo(grafana_ext, "grafana_plotly_plugin")
+```
+
+Then pass the plugin to the image rule's `plugins` list as `@grafana_plotly_plugin//:plugin`.
 
 ### Custom grafana image
 
-The default version of grafana shipped with this module may not suit your needs.
-You can use a custom image by setting the `use_custom_container` arg for `repositories()`
-macro and defining a container_pull rule named `io_bazel_rules_grafana_docker`:
-
-```starlark
-load(
-    "@io_bazel_rules_grafana//grafana:workspace.bzl",
-    grafana_repositories = "repositories",
-)
-
-grafana_repositories(use_custom_container = True)
-
-container_pull(
-    name = "io_bazel_rules_grafana_docker",
-    registry = "gcr.io",
-    repository = "etsy-searchinfra-tools-sandbox/grafana",
-    tag = "6.5.2",
-    digest = "sha256:24fcb753c050522ebc36f70873f081ff937f41a6adad133407709513aac3b016",
-)
-```
+The default version of Grafana (12.0) may not suit your needs.
+You can override the container by modifying the grafana extension in your MODULE.bazel.
 
 ## API reference
 
@@ -163,7 +154,6 @@ Processes a set of `.py` Grafana dashboards for inclusion in the image.
 Arguments:
 
 - `name`: Unique name for this target.  Required.
-- `python_version`: Version of python used.
 - `srcs`: List of labels of `.py` files to build into dashboards.  Required.
 - `deps`: List of labels of additional `py_library` targets to use while executing the Python dashboards.  Optional, default `[]`.
 
@@ -176,17 +166,21 @@ Arguments:
 - `name`: Unique name for this target.  Required.
 - `dashboards`: List of labels of `json_dashboards` and/or `py_dashboards` targets to include in the image.  Required.
 - `datasources`: List of labels of `datasources.yaml` files to include in the image ([Grafana datasources docs](http://docs.grafana.org/administration/provisioning/#datasources)).  Required.
-- `plugins`: List of labels of `grafana_plugin` targets, like `@your_repository_name//:plugin`.  Optional.
+- `plugins`: List of labels of plugin targets from the grafana extension, like `@your_plugin_name//:plugin`.  Optional.
 - `env`: Dictionary of environment variant names to values, set in the Docker image when Grafana is run.  Optional.
     Useful for setting runtime configs with `GF_` variables.
 
-### `grafana_plugin`
+### Module extension: `grafana`
 
-Repository rule to download a Grafana plugin for inclusion in a `grafana_image`.
+Module extension for managing Grafana plugins and container configuration.
+
+#### `grafana.plugin`
+
+Downloads a Grafana plugin for inclusion in a `grafana_image`.
 
 Arguments:
 
-- `name`: Unique name for this target.  Required.
+- `name`: Unique name for this plugin repository.  Required.
 - `urls`: List of strings of mirror URLs referencing the plugin archive.  Required.
 - `sha256`: String of the expected SHA-256 hash of the download.  Required.
 - `type`: The archive type of the downloaded file as a string;
