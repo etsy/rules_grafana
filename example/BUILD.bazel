@@ -1,16 +1,16 @@
-load("@io_bazel_rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
-load("@io_bazel_rules_grafana//grafana:image.bzl", "grafana_image")
+load("@rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
+load("@rules_grafana//grafana:image.bzl", "grafana_image")
 
 # Picks up all *.json files in this directory:
 json_dashboards(
     name = "json_dashboards",
-    srcs = glob(["*.json"]),
+    srcs = glob(["*.json"], allow_empty = True),
 )
 
 # Picks up all *.py files in this directory:
 py_dashboards(
     name = "py_dashboards",
-    srcs = glob(["*.py"]),
+    srcs = glob(["*.py"], allow_empty = True),
 )
 
 # Built dashboards can be combined together in a filegroup for easy access:

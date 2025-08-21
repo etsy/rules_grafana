@@ -1,5 +1,5 @@
 load("@rules_oci//oci:defs.bzl", "oci_image")
-load("@rules_pkg_grafana//pkg:tar.bzl", "pkg_tar")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
 def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibility = None):
     """
@@ -18,8 +18,8 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
         allow_duplicates_with_different_content = False,
         package_dir = "/etc/grafana",
         srcs = [
-            "@io_bazel_rules_grafana//grafana:config/grafana.ini",
-            "@io_bazel_rules_grafana//grafana:config/entrypoint.sh",
+            "@rules_grafana//grafana:config/grafana.ini",
+            "@rules_grafana//grafana:config/entrypoint.sh",
         ],
     )
 
@@ -27,7 +27,7 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
         name = "%s_grafana_dashboards_provisioning" % name,
         allow_duplicates_with_different_content = False,
         package_dir = "/etc/grafana/provisioning/dashboards/",
-        srcs = ["@io_bazel_rules_grafana//grafana:config/provisioning/dashboards.yaml"],
+        srcs = ["@rules_grafana//grafana:config/provisioning/dashboards.yaml"],
     )
 
     pkg_tar(
@@ -64,7 +64,7 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, visibil
 
     oci_image(
         name = name,
-        base = "@io_bazel_rules_grafana_docker",
+        base = "@grafana_oci",
         tars = [
             "%s_grafana_etc" % name,
             "%s_grafana_dashboards_provisioning" % name,

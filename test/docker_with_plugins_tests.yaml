@@ -3,6 +3,6 @@
 schemaVersion: 2.0.0
 
 fileExistenceTests:
-- name: plotly plugin exsts
-  path: /var/lib/grafana/plugins/grafana_plotly_plugin/natel-plotly-panel/plugin.json
+- name: plotly plugin exists
+  path: /var/lib/grafana/plugins/+grafana+grafana_plotly_plugin/natel-plotly-panel/plugin.json
   shouldExist: true
