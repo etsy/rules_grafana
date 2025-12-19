@@ -74,7 +74,7 @@ def _py_dashboard_builder(src, deps = None):
     if deps == None:
         deps = []
     py_binary_name = src.replace(".py", "_builder")
-    grafana_deps = requirement("grafanalib")
+    grafana_deps = requirement("grafana_foundation_sdk")
     py_binary(
         name = py_binary_name,
         srcs = [src],

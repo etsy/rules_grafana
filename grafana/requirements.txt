@@ -4,11 +4,7 @@
 #
 #    bazel run //grafana:requirements.update
 #
-attrs==22.1.0 \
-    --hash=sha256:29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6 \
-    --hash=sha256:86efa402f67bf2df34f51a335487cf46b1ec130d02b8d39fd248abfd30da551c
-    # via grafanalib
-# WARNING: pip install will require the following package to be hashed.
-# Consider using a hashable URL like https://github.com/jazzband/pip-tools/archive/SOMECOMMIT.zip
-grafanalib @ git+https://github.com/weaveworks/grafanalib.git@d6b8866b992081cc6941033e60425fb2dc3da5b9
+grafana-foundation-sdk==1759917919!11.6.0 \
+    --hash=sha256:681f8a0464b5f1a6ffc02bdb538b6190bb73f7d03cff8c3b6d71267c0ec6362b \
+    --hash=sha256:ab3d4882c6cecd2a50015b83b13940b1bb5c040e21d052d63ea6d8e7f0cebac6
     # via -r grafana/requirements.in
