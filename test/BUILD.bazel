@@ -69,7 +69,7 @@ container_structure_test(
     name = "grafana_docker_test",
     configs = ["docker_tests.yaml"],
     image = ":grafana",
-    tags = ["docker"],
+    tags = ["docker", "oci"],
 )
 
 grafana_image(
@@ -86,5 +86,5 @@ container_structure_test(
     name = "grafana_with_plugins_docker_test",
     configs = ["docker_with_plugins_tests.yaml"],
     image = ":grafana_with_plugins",
-    tags = ["docker"],
+    tags = ["docker", "oci"],
 )
