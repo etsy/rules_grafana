@@ -7,12 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  build-linux:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
         bazel: ["7.4.1", "8.0.0"]
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +20,7 @@ jobs:
         uses: bazel-contrib/setup-bazel@0.14.0
         with:
           bazelisk-version: "1.25.0"
-          disk-cache: ${{ github.workflow }}-${{ matrix.bazel }}
+          disk-cache: ${{ github.workflow }}-linux-${{ matrix.bazel }}
           repository-cache: ${{ github.workflow }}
 
       - name: Build
@@ -30,33 +29,35 @@ jobs:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
       - name: Test
-        run: bazel test //...
+        run: bazel test //... --test_tag_filters=-docker
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
-  # E2E tests are on a separate branch (playwright-e2e)
-  # Uncomment when ready to merge:
-  # e2e:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: bazel-contrib/setup-bazel@0.14.0
-  #       with:
-  #         bazelisk-version: "1.25.0"
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "20"
-  #     - run: bazel run //example:grafana_load
-  #       env:
-  #         USE_BAZEL_VERSION: "8.0.0"
-  #     - run: |
-  #         docker run -d --name grafana_test -p 3000:3000 rules_grafana/example:latest
-  #         for i in {1..30}; do
-  #           curl -s http://localhost:3000/api/health | grep -q '"database":"ok"' && break
-  #           sleep 1
-  #         done
-  #     - working-directory: e2e
-  #       run: npm install && npx playwright install chromium && npm test
-  #     - if: always()
-  #       run: docker rm -f grafana_test || true
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bazel: ["7.4.1", "8.0.0"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bazel
+        uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-version: "1.25.0"
+          disk-cache: ${{ github.workflow }}-macos-${{ matrix.bazel }}
+          repository-cache: ${{ github.workflow }}
+
+      # On macOS, only build non-OCI targets (grafana image requires linux)
+      - name: Build (excluding OCI targets)
+        run: |
+          bazel build //grafana/... //test:json_dashboards //test:py_dashboards
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel }}
+
+      - name: Test (excluding docker tests)
+        run: |
+          bazel test //test:json_no_uid_test //test:json_existing_uid_test //test:py_dash_test //grafana:requirements.test
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel }}
