@@ -26,5 +26,5 @@ jobs:
             rules_grafana-*.tar.gz
             rules_grafana-*.tar.gz.sha256
           generate_release_notes: true
-        # The Publish to BCR GitHub App (if installed) will automatically
-        # detect this release and create a PR to the BCR
+        # The Publish to BCR GitHub App will automatically detect this
+        # release and create a PR to the BCR

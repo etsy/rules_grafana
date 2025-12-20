@@ -30,3 +30,9 @@ bcr_test_module_linux:
       build_targets:
         - "//example:grafana"
         - "//test:grafana"
+        - "//test:grafana_with_plugins"
+    test_oci:
+      name: "Test OCI targets (Linux only)"
+      test_targets:
+        - "//test:grafana_docker_test"
+        - "//test:grafana_with_plugins_docker_test"

@@ -33,6 +33,11 @@ jobs:
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
+      - name: Test Docker targets
+        run: bazel test //test:grafana_docker_test //test:grafana_with_plugins_docker_test
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel }}
+
   build-macos:
     runs-on: macos-latest
     strategy:
