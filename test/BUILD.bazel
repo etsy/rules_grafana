@@ -62,7 +62,6 @@ grafana_image(
         ":py_dashboards",
     ],
     datasources = [":test_datasources.yaml"],
-    tags = ["oci"],
 )
 
 container_structure_test(
@@ -79,7 +78,6 @@ grafana_image(
     ],
     datasources = [":test_datasources.yaml"],
     plugins = ["@grafana_plotly_plugin//:plugin"],
-    tags = ["oci"],
 )
 
 container_structure_test(

@@ -11,7 +11,7 @@ def grafana_image(name, datasources, dashboards, plugins = [], env = {}, tags = 
         dashboards: List of labels of `json_dashboards` and/or `py_dashboards` targets to include in the image.
         plugins: List of labels of `grafana_plugin` targets.
         env: Dictionary of environment variant names to values, set in the Docker image when Grafana is run.
-        tags: List of tags to apply to the target (e.g., ["oci"] to filter on macOS).
+        tags: List of tags to apply to the target.
         visibility: Controls whether the rule can be used by other packages.
     """
     pkg_tar(

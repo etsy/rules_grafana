@@ -29,7 +29,6 @@ grafana_image(
     name = "grafana",
     dashboards = [":dashboards"],
     datasources = [":datasources.yaml"],
-    tags = ["oci"],
 )
 
 # Load the Grafana image into Docker for local testing:
@@ -37,5 +36,4 @@ oci_load(
     name = "grafana_load",
     image = ":grafana",
     repo_tags = ["rules_grafana/example:latest"],
-    tags = ["oci"],
 )
