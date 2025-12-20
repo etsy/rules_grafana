@@ -29,8 +29,8 @@ def _grafana_extension_impl(module_ctx):
     """Implementation for grafana module extension."""
     
     # Pull default grafana container (linux/amd64 only).
-    # OCI image builds are skipped on macOS CI since rules_oci requires a matching
-    # host platform. For local macOS development, Docker Desktop emulates x86_64.
+    # OCI images can be built on any platform. Running containers requires Docker,
+    # which handles architecture translation on macOS via Docker Desktop.
     oci_pull(
         name = "grafana_oci",
         image = "index.docker.io/grafana/grafana",

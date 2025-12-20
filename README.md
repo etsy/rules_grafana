@@ -236,7 +236,6 @@ Arguments:
 - `env`: Dictionary of environment variant names to values, set in the Docker image when Grafana is run.  Optional.
     Useful for setting runtime configs with `GF_` variables.
 - `tags`: List of tags to apply to the target.  Optional.
-    Useful for filtering builds, e.g., `["oci"]` to exclude on macOS with `--build_tag_filters=-oci`.
 
 ### Module extension: `grafana`
 

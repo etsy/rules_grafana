@@ -7,16 +7,18 @@ bcr_test_module:
     bazel:
       - 8.x
   tasks:
-    run_tests:
-      name: "Build and test (excluding OCI on macOS)"
+    build_all:
+      name: "Build all targets"
       build_targets:
         - "//..."
-      build_flags:
-        - "--build_tag_filters=-oci"
+    # Docker tests excluded because GitHub macOS runners don't have Docker
+    # https://github.com/actions/runner/issues/1456
+    test_non_docker:
+      name: "Test (excluding docker tests)"
       test_targets:
         - "//..."
       test_flags:
-        - "--test_tag_filters=-docker,-oci"
+        - "--test_tag_filters=-docker"
 
 bcr_test_module_linux:
   module_path: ""
@@ -26,9 +28,9 @@ bcr_test_module_linux:
     bazel:
       - 8.x
   tasks:
-    run_all:
-      name: "Build and test everything (Linux)"
-      build_targets:
-        - "//..."
+    test_docker:
+      name: "Test docker targets (Linux only)"
       test_targets:
         - "//..."
+      test_flags:
+        - "--test_tag_filters=docker"

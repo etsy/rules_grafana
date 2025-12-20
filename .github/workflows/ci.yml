@@ -49,12 +49,14 @@ jobs:
           disk-cache: ${{ github.workflow }}-macos-${{ matrix.bazel }}
           repository-cache: ${{ github.workflow }}
 
-      - name: Build (excluding OCI targets)
-        run: bazel build //... --build_tag_filters=-oci
+      - name: Build
+        run: bazel build //...
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
-      - name: Test (excluding OCI/docker tests)
-        run: bazel test //... --test_tag_filters=-docker,-oci
+      # Docker is not available on GitHub-hosted macOS runners
+      # https://github.com/actions/runner/issues/1456
+      - name: Test (excluding docker tests)
+        run: bazel test //... --test_tag_filters=-docker
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
