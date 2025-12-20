@@ -2,40 +2,66 @@
 
 Dashboards as code, the [Bazel](https://bazel.build/) way.
 Write Grafana dashboards with Python
-and build them in into a reusable Docker image.
+and build them into a reusable Docker image.
 
-Try it out!  `bazel run //example:grafana` to build and load a Docker image,
-then run it with `docker run --rm -p 3000:3000 bazel/example:grafana`.
-Then load Grafana in your browser at `http://localhost:3000`!
+## Try it out
 
-## Installing
+```bash
+# Build and load the Docker image
+bazel run //example:grafana_load
 
-Load `rules_grafana` by adding the following to your `MODULE.bazel`:
+# Run the container
+docker run --rm -p 3000:3000 rules_grafana/example:latest
+
+# Open Grafana in your browser
+open http://localhost:3000
+```
+
+## Installation
+
+### From Bazel Central Registry (recommended)
+
+Add to your `MODULE.bazel`:
 
 ```starlark
-bazel_dep(name = "rules_grafana", version = "1.0.0")
+bazel_dep(name = "rules_grafana", version = "2.0.0")
 
 # For plugins and container setup
-grafana_ext = use_extension("@rules_grafana//grafana:extensions.bzl", "grafana")
-use_repo(grafana_ext, "grafana_oci")
+grafana = use_extension("@rules_grafana//grafana:extensions.bzl", "grafana")
+use_repo(grafana, "grafana_oci")
 
 # Optional: Add plugins
-grafana_ext.plugin(
+grafana.plugin(
     name = "my_plugin",
     urls = ["https://grafana.com/api/plugins/my-plugin/versions/1.0.0/download"],
     sha256 = "...",
     type = "zip",
 )
-use_repo(grafana_ext, "my_plugin")
+use_repo(grafana, "my_plugin")
 ```
 
-`rules_grafana` depends on [`rules_python`](https://github.com/bazelbuild/rules_python) and
-[`rules_oci`](https://github.com/bazel-contrib/rules_oci), but these are automatically managed
-through Bazel's module system.
+### From GitHub (before BCR publication)
+
+```starlark
+bazel_dep(name = "rules_grafana", version = "2.0.0")
+git_override(
+    module_name = "rules_grafana",
+    remote = "https://github.com/etsy/rules_grafana.git",
+    branch = "grafana-foundation-sdk",
+)
+
+# For plugins and container setup
+grafana = use_extension("@rules_grafana//grafana:extensions.bzl", "grafana")
+use_repo(grafana, "grafana_oci")
+```
 
 ## Bazel compatibility
 
 Requires Bazel 7.0.0 or later with bzlmod enabled.
+
+`rules_grafana` depends on [`rules_python`](https://github.com/bazelbuild/rules_python) and
+[`rules_oci`](https://github.com/bazel-contrib/rules_oci), but these are automatically managed
+through Bazel's module system.
 
 ## Usage
 
@@ -46,7 +72,7 @@ Dashboards can be either hard-coded JSON files or Python scripts that generate d
 
 ### JSON dashboards
 
-Use `json_dashboards` to add JSON files containing dashboard to your build.
+Use `json_dashboards` to add JSON files containing dashboards to your build.
 The JSON must be a complete, valid Grafana dashboard;
 see the [Grafana docs](http://docs.grafana.org/reference/dashboard/) for details on the JSON format.
 
@@ -66,23 +92,36 @@ to ensure it has a [consistent URL in Grafana](http://docs.grafana.org/administr
 
 ### Python dashboards
 
-Dashboards can also be generated with Python,
-using the [`grafanalib`](https://github.com/weaveworks/grafanalib) library.
-`grafanalib` is automatically imported,
-and you can also add other `deps` to help build your dashboard.
+Dashboards can also be generated with Python using the
+[`grafana-foundation-sdk`](https://github.com/grafana/grafana-foundation-sdk) library.
+The SDK provides type-safe builders for creating Grafana dashboards programmatically.
 
 Each Python dashboard file should print the complete JSON of a Grafana dashboard.
-An easy way to do that is to follow a template like this:
+Here's a template to get started:
 
 ```python
-from grafanalib.core import *
-from grafanalib._gen import print_dashboard
+import json
+from grafana_foundation_sdk.builders import dashboard as dashboard_builder
+from grafana_foundation_sdk.builders import text, timeseries
+from grafana_foundation_sdk.cog.encoder import JSONEncoder
+from grafana_foundation_sdk.models.dashboard import GridPos
 
-dashboard = Dashboard(
-    # Fill in your dashboard!
+dashboard = (
+    dashboard_builder.Dashboard("My Dashboard")
+    .with_panel(
+        text.Panel()
+        .title("Welcome")
+        .grid_pos(GridPos(h=4, w=24, x=0, y=0))
+    )
+    .with_panel(
+        timeseries.Panel()
+        .title("Metrics")
+        .grid_pos(GridPos(h=8, w=12, x=0, y=4))
+    )
+    .build()
 )
 
-print_dashboard(dashboard.auto_panel_ids()) # `auto_panel_ids()` call is required!
+print(json.dumps(dashboard, cls=JSONEncoder, indent=2))
 ```
 
 Use `py_dashboards` to add Python files that generate dashboards to your build.
@@ -99,7 +138,7 @@ py_dashboards(
 You can run the Python and see the generated JSON with the `FOO_builder` target created by `py_dashboards`,
 where `FOO` is the Python filename without `.py`.
 For example, run `bazel run //example:sample_builder` in this repository to see the output of `sample.py`.
-The JSON is generated at build time, not a run time, so Python isn't a runtime dependency.
+The JSON is generated at build time, not at run time, so Python isn't a runtime dependency.
 
 ### Docker image
 
@@ -108,35 +147,71 @@ When you run the image, it starts Grafana on port 3000
 and serves all of the dashboards you've built,
 directly from the container.
 
+```python
+load("@rules_grafana//grafana:image.bzl", "grafana_image")
+load("@rules_oci//oci:defs.bzl", "oci_load")
+
+grafana_image(
+    name = "grafana",
+    dashboards = [":dashboards"],
+    datasources = [":datasources.yaml"],
+)
+
+# To run locally, load the image into Docker:
+oci_load(
+    name = "grafana_load",
+    image = ":grafana",
+    repo_tags = ["my-grafana:latest"],
+)
+```
+
+Then run:
+
+```bash
+bazel run //:grafana_load
+docker run --rm -p 3000:3000 my-grafana:latest
+```
+
 The dashboards and datasources are added via [Grafana provisioning](http://docs.grafana.org/administration/provisioning/),
 where the configuration and sources are declared and built into the image,
 alongside all the dashboards.
 You must provide a `datasources.yaml` file declaring your datasources;
 see the [Grafana datasources docs](http://docs.grafana.org/administration/provisioning/#datasources) for details of the format.
 
+### Plugins
+
 Grafana plugins can be installed into the image too.
 Use the `grafana` module extension to download plugins:
 
 ```starlark
 # In your MODULE.bazel
-grafana_ext = use_extension("@rules_grafana//grafana:extensions.bzl", "grafana")
-grafana_ext.plugin(
+grafana = use_extension("@rules_grafana//grafana:extensions.bzl", "grafana")
+grafana.plugin(
     name = "grafana_plotly_plugin",
     urls = ["https://grafana.com/api/plugins/natel-plotly-panel/versions/0.0.7/download"],
     sha256 = "818ab33b42a1421b561f4e44f0cd19cd1a56767d3952045b8042a4da58bd470e",
     type = "zip",
 )
-use_repo(grafana_ext, "grafana_plotly_plugin")
+use_repo(grafana, "grafana_plotly_plugin")
 ```
 
 Then pass the plugin to the image rule's `plugins` list as `@grafana_plotly_plugin//:plugin`.
 
-### Custom grafana image
+### Custom Grafana image
 
 The default version of Grafana (12.0) may not suit your needs.
 You can override the container by modifying the grafana extension in your MODULE.bazel.
 
-## API reference
+## E2E Testing
+
+The repository includes Playwright-based E2E tests to validate the Grafana deployment:
+
+```bash
+# Run the full E2E test suite
+./e2e/run-e2e.sh
+```
+
+## API Reference
 
 ### `json_dashboards`
 
@@ -186,3 +261,11 @@ Arguments:
 - `type`: The archive type of the downloaded file as a string;
           takes the same values as the `type` attribute of Bazel's `http_archive` rule.
           Optional, as the archive type can be determined from the plugin's file extension.
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+[Apache 2.0](LICENSE)

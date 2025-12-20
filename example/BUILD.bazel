@@ -1,5 +1,6 @@
 load("@rules_grafana//grafana:grafana.bzl", "json_dashboards", "py_dashboards")
 load("@rules_grafana//grafana:image.bzl", "grafana_image")
+load("@rules_oci//oci:defs.bzl", "oci_load")
 
 # Picks up all *.json files in this directory:
 json_dashboards(
@@ -28,4 +29,11 @@ grafana_image(
     name = "grafana",
     dashboards = [":dashboards"],
     datasources = [":datasources.yaml"],
+)
+
+# Load the Grafana image into Docker for local testing:
+oci_load(
+    name = "grafana_load",
+    image = ":grafana",
+    repo_tags = ["rules_grafana/example:latest"],
 )

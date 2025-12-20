@@ -1,0 +1,15 @@
+{
+    "homepage": "https://github.com/etsy/rules_grafana",
+    "maintainers": [
+        {
+            "email": "gdonovan@etsy.com",
+            "github": "greggdonovan",
+            "name": "Gregg Donovan"
+        }
+    ],
+    "repository": [
+        "github:etsy/rules_grafana"
+    ],
+    "versions": [],
+    "yanked_versions": {}
+}

@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main, grafana-foundation-sdk]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        bazel: ["7.x", "8.x"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-version: "latest"
+          bazel-version: ${{ matrix.bazel }}
+          disk-cache: ${{ github.workflow }}
+          repository-cache: ${{ github.workflow }}
+
+      - name: Build
+        run: bazel build //...
+
+      - name: Test
+        run: bazel test //...
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-version: "latest"
+          bazel-version: "8.x"
+          disk-cache: ${{ github.workflow }}-e2e
+          repository-cache: ${{ github.workflow }}-e2e
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build and load Grafana image
+        run: bazel run //example:grafana_load
+
+      - name: Start Grafana container
+        run: |
+          docker run -d --name grafana_test -p 3000:3000 rules_grafana/example:latest
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/health | grep -q '"database":"ok"'; then
+              echo "Grafana is ready!"
+              break
+            fi
+            echo "Waiting for Grafana... (attempt $i/30)"
+            sleep 1
+          done
+
+      - name: Install Playwright
+        working-directory: e2e
+        run: |
+          npm install
+          npx playwright install chromium
+
+      - name: Run E2E tests
+        working-directory: e2e
+        run: npm test
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: e2e/test-results/
+
+      - name: Stop Grafana container
+        if: always()
+        run: docker rm -f grafana_test || true
