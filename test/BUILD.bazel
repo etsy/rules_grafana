@@ -84,13 +84,5 @@ container_structure_test(
     name = "grafana_with_plugins_docker_test",
     configs = ["docker_with_plugins_tests.yaml"],
     image = ":grafana_with_plugins",
-    # TODO: Plugin install path contains the canonical repo name which differs:
-    # - Bazel 7.x: _main~grafana~grafana_plotly_plugin
-    # - Bazel 8.x: +grafana+grafana_plotly_plugin
-    # The test config hardcodes one format, so it fails on the other version.
-    # Fix: use a glob pattern or make the path version-agnostic.
-    tags = [
-        "docker",
-        "manual",
-    ],
+    tags = ["docker"],
 )

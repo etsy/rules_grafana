@@ -57,7 +57,7 @@ use_repo(grafana, "grafana_oci")
 
 ## Bazel compatibility
 
-Requires Bazel 7.0.0 or later with bzlmod enabled.
+Requires Bazel 8.0.0 or later with bzlmod enabled.
 
 `rules_grafana` depends on [`rules_python`](https://github.com/bazelbuild/rules_python) and
 [`rules_oci`](https://github.com/bazel-contrib/rules_oci), but these are automatically managed
@@ -201,15 +201,6 @@ Then pass the plugin to the image rule's `plugins` list as `@grafana_plotly_plug
 
 The default version of Grafana (12.0) may not suit your needs.
 You can override the container by modifying the grafana extension in your MODULE.bazel.
-
-## E2E Testing
-
-The repository includes Playwright-based E2E tests to validate the Grafana deployment:
-
-```bash
-# Run the full E2E test suite
-./e2e/run-e2e.sh
-```
 
 ## API Reference
 

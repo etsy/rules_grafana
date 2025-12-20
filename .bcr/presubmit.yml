@@ -5,7 +5,6 @@ bcr_test_module:
       - ubuntu-22.04
       - macos-15
     bazel:
-      - 7.x
       - 8.x
   tasks:
     run_tests:
@@ -24,7 +23,6 @@ bcr_test_module_linux:
     platform:
       - ubuntu-22.04
     bazel:
-      - 7.x
       - 8.x
   tasks:
     build_oci:
