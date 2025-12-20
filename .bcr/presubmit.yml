@@ -8,14 +8,15 @@ bcr_test_module:
       - 8.x
   tasks:
     run_tests:
-      name: "Build and test"
+      name: "Build and test (excluding OCI on macOS)"
       build_targets:
-        - "//example:dashboards"
-        - "//grafana/..."
+        - "//..."
+      build_flags:
+        - "--build_tag_filters=-oci"
       test_targets:
-        - "//test:json_no_uid_test"
-        - "//test:json_existing_uid_test"
-        - "//test:py_dash_test"
+        - "//..."
+      test_flags:
+        - "--test_tag_filters=-docker,-oci"
 
 bcr_test_module_linux:
   module_path: ""
@@ -25,14 +26,9 @@ bcr_test_module_linux:
     bazel:
       - 8.x
   tasks:
-    build_oci:
-      name: "Build OCI targets (Linux only)"
+    run_all:
+      name: "Build and test everything (Linux)"
       build_targets:
-        - "//example:grafana"
-        - "//test:grafana"
-        - "//test:grafana_with_plugins"
-    test_oci:
-      name: "Test OCI targets (Linux only)"
+        - "//..."
       test_targets:
-        - "//test:grafana_docker_test"
-        - "//test:grafana_with_plugins_docker_test"
+        - "//..."

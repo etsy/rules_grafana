@@ -29,12 +29,7 @@ jobs:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
       - name: Test
-        run: bazel test //... --test_tag_filters=-docker
-        env:
-          USE_BAZEL_VERSION: ${{ matrix.bazel }}
-
-      - name: Test Docker targets
-        run: bazel test //test:grafana_docker_test //test:grafana_with_plugins_docker_test
+        run: bazel test //...
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
@@ -54,13 +49,12 @@ jobs:
           disk-cache: ${{ github.workflow }}-macos-${{ matrix.bazel }}
           repository-cache: ${{ github.workflow }}
 
-      # On macOS, only build non-OCI targets (Grafana OCI image is linux/amd64 only)
       - name: Build (excluding OCI targets)
-        run: bazel build //grafana/... //test:json_dashboards //test:py_dashboards
+        run: bazel build //... --build_tag_filters=-oci
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
-      - name: Test (excluding docker tests)
-        run: bazel test //test:json_no_uid_test //test:json_existing_uid_test //test:py_dash_test //grafana:requirements.test
+      - name: Test (excluding OCI/docker tests)
+        run: bazel test //... --test_tag_filters=-docker,-oci
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
