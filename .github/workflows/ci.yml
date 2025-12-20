@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bazel: ["latest"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bazel
+        uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-version: "1.27.0"
+          disk-cache: ${{ github.workflow }}-linux-${{ matrix.bazel }}
+          repository-cache: ${{ github.workflow }}
+
+      - name: Build
+        run: bazel build //...
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel }}
+
+      - name: Test
+        run: bazel test //...
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel }}
+
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bazel: ["latest"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bazel
+        uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-version: "1.27.0"
+          disk-cache: ${{ github.workflow }}-macos-${{ matrix.bazel }}
+          repository-cache: ${{ github.workflow }}
+
+      # OCI targets excluded: oci_pull uses select() for linux/amd64 which fails on arm64
+      # Docker tests excluded: Docker not available on GitHub macOS runners
+      # https://github.com/actions/runner/issues/1456
+      - name: Build (excluding OCI targets)
+        run: bazel build //... --build_tag_filters=-oci
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel }}
+
+      - name: Test (excluding OCI/docker tests)
+        run: bazel test //... --build_tag_filters=-oci --test_tag_filters=-docker,-oci
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel }}

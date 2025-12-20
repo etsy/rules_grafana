@@ -1,3 +1,25 @@
+"""Bazel rules for building Grafana dashboards.
+
+This module provides rules for building Grafana dashboards from JSON files
+or Python scripts using grafanalib.
+
+Example Python dashboard using grafanalib:
+
+    from grafanalib.core import *
+    from grafanalib._gen import print_dashboard
+
+    dashboard = Dashboard(
+        title="My Dashboard",
+        rows=[
+            Row(panels=[
+                Text(content="Welcome"),
+            ]),
+        ],
+    )
+
+    print_dashboard(dashboard.auto_panel_ids())
+"""
+
 load("@rules_grafana_deps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary")
 

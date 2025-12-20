@@ -1,0 +1,39 @@
+bcr_test_module_linux:
+  module_path: ""
+  matrix:
+    platform:
+      - ubuntu-22.04
+    bazel:
+      - 8.x
+  tasks:
+    build_and_test:
+      name: "Build and test all"
+      build_targets:
+        - "//..."
+      test_targets:
+        - "//..."
+      # Linux runners have Docker available, so run docker/oci tests here.
+
+bcr_test_module_macos:
+  module_path: ""
+  matrix:
+    platform:
+      - macos-15
+    bazel:
+      - 8.x
+  tasks:
+    build_and_test:
+      name: "Build and test (no OCI/Docker)"
+      build_targets:
+        - "//..."
+      build_flags:
+        # OCI targets use select() for linux/amd64 which fails on arm64
+        - "--build_tag_filters=-oci"
+      test_targets:
+        - "//..."
+      test_flags:
+        # OCI targets use select() for linux/amd64 which fails on arm64
+        - "--build_tag_filters=-oci"
+        # Docker not available on GitHub macOS runners
+        # https://github.com/actions/runner/issues/1456
+        - "--test_tag_filters=-docker,-oci"

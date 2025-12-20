@@ -3,8 +3,8 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@rules_oci//oci:pull.bzl", "oci_pull")
 
-DEFAULT_GRAFANA_TAG = "12.0"
-DEFAULT_GRAFANA_SHA = "sha256:9cf02c25384f03cb3ae64b8a814d651982b8c2cf9d624e2de2450be1ace7812e"
+DEFAULT_GRAFANA_TAG = "11.6.9"
+DEFAULT_GRAFANA_SHA = "sha256:129fc95da485ade43720ab7ca725c34ce15ea3c03fadb68309e65829a929e3c5"
 
 def _grafana_plugin_impl(name, urls, sha256, type = None):
     """Implementation for grafana_plugin rule."""
@@ -28,7 +28,10 @@ _grafana_plugin_tag = tag_class(
 def _grafana_extension_impl(module_ctx):
     """Implementation for grafana module extension."""
     
-    # Pull default grafana container
+    # Pull default grafana container (linux/amd64 only).
+    # oci_pull creates a select() for the specified platform. On arm64 macOS,
+    # builds fail because there's no matching platform. Use --build_tag_filters=-oci
+    # to exclude OCI targets on arm64. Intel Macs and Linux work fine.
     oci_pull(
         name = "grafana_oci",
         image = "index.docker.io/grafana/grafana",

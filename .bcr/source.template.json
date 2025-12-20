@@ -1,0 +1,5 @@
+{
+    "integrity": "",
+    "strip_prefix": "rules_grafana-{TAG}",
+    "url": "https://github.com/etsy/rules_grafana/releases/download/v{TAG}/rules_grafana-{TAG}.tar.gz"
+}

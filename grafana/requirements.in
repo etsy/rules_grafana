@@ -1,2 +1,2 @@
-# run `bazel run //grafana:requirements.update` when youn update this file
-git+https://github.com/weaveworks/grafanalib.git@d6b8866b992081cc6941033e60425fb2dc3da5b9
+# run `bazel run //grafana:requirements.update` when you update this file
+grafanalib==0.7.1

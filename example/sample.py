@@ -17,7 +17,8 @@ dashboard = Dashboard(
                 targets=[
                     Target(),
                 ],
-            ),        ]),
+            ),
+        ]),
     ],
 )
 
