@@ -1,25 +1,3 @@
-bcr_test_module:
-  module_path: ""
-  matrix:
-    platform:
-      - ubuntu-22.04
-      - macos-15
-    bazel:
-      - 8.x
-  tasks:
-    build_all:
-      name: "Build all targets"
-      build_targets:
-        - "//..."
-    # Docker tests excluded because GitHub macOS runners don't have Docker
-    # https://github.com/actions/runner/issues/1456
-    test_non_docker:
-      name: "Test (excluding docker tests)"
-      test_targets:
-        - "//..."
-      test_flags:
-        - "--test_tag_filters=-docker"
-
 bcr_test_module_linux:
   module_path: ""
   matrix:
@@ -28,9 +6,28 @@ bcr_test_module_linux:
     bazel:
       - 8.x
   tasks:
-    test_docker:
-      name: "Test docker targets (Linux only)"
+    build_and_test:
+      name: "Build and test all"
+      build_targets:
+        - "//..."
+      test_targets:
+        - "//..."
+
+bcr_test_module_macos:
+  module_path: ""
+  matrix:
+    platform:
+      - macos-15
+    bazel:
+      - 8.x
+  tasks:
+    build_and_test:
+      name: "Build and test (no Docker)"
+      build_targets:
+        - "//..."
       test_targets:
         - "//..."
       test_flags:
-        - "--test_tag_filters=docker"
+        # Docker not available on GitHub macOS runners
+        # https://github.com/actions/runner/issues/1456
+        - "--test_tag_filters=-docker"
