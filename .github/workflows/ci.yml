@@ -2,9 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main, grafana-foundation-sdk]
-  pull_request:
     branches: [main]
+  pull_request:
 
 jobs:
   build-linux:
