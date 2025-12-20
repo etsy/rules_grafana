@@ -28,15 +28,14 @@ _grafana_plugin_tag = tag_class(
 def _grafana_extension_impl(module_ctx):
     """Implementation for grafana module extension."""
     
-    # Pull default grafana container (multi-platform for amd64 and arm64)
+    # Pull default grafana container
+    # Note: Only linux/amd64 is supported. On macOS, Docker Desktop handles
+    # architecture translation via Rosetta. For CI, OCI builds are skipped on macOS.
     oci_pull(
         name = "grafana_oci",
         image = "index.docker.io/grafana/grafana",
         digest = DEFAULT_GRAFANA_SHA,
-        platforms = [
-            "linux/amd64",
-            "linux/arm64",
-        ],
+        platforms = ["linux/amd64"],
     )
     
     # Process grafana_plugin tags

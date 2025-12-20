@@ -49,8 +49,9 @@ jobs:
           disk-cache: ${{ github.workflow }}-macos-${{ matrix.bazel }}
           repository-cache: ${{ github.workflow }}
 
-      - name: Build
-        run: bazel build //...
+      # On macOS, only build non-OCI targets (Grafana OCI image is linux/amd64 only)
+      - name: Build (excluding OCI targets)
+        run: bazel build //grafana/... //test:json_dashboards //test:py_dashboards
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 

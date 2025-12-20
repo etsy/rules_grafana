@@ -11,9 +11,24 @@ bcr_test_module:
     run_tests:
       name: "Build and test"
       build_targets:
-        - "//example:grafana"
         - "//example:dashboards"
+        - "//grafana/..."
       test_targets:
         - "//test:json_no_uid_test"
         - "//test:json_existing_uid_test"
         - "//test:py_dash_test"
+
+bcr_test_module_linux:
+  module_path: ""
+  matrix:
+    platform:
+      - ubuntu-22.04
+    bazel:
+      - 7.x
+      - 8.x
+  tasks:
+    build_oci:
+      name: "Build OCI targets (Linux only)"
+      build_targets:
+        - "//example:grafana"
+        - "//test:grafana"
