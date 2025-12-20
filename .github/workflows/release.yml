@@ -16,7 +16,7 @@ jobs:
 
       - name: Create release archive
         run: |
-          TAG=${GITHUB_REF#refs/tags/v}
+          TAG=${GITHUB_REF#refs/tags/}
           git archive --format=tar.gz --prefix=rules_grafana-${TAG}/ HEAD > rules_grafana-${TAG}.tar.gz
           sha256sum rules_grafana-${TAG}.tar.gz > rules_grafana-${TAG}.tar.gz.sha256
 
