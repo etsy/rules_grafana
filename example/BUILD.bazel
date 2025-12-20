@@ -25,10 +25,12 @@ filegroup(
 )
 
 # Build the dashboards into a docker image:
+# Tagged "oci" to exclude from macOS CI (arm64 can't build linux/amd64 OCI images)
 grafana_image(
     name = "grafana",
     dashboards = [":dashboards"],
     datasources = [":datasources.yaml"],
+    tags = ["oci"],
 )
 
 # Load the Grafana image into Docker for local testing:
@@ -36,4 +38,5 @@ oci_load(
     name = "grafana_load",
     image = ":grafana",
     repo_tags = ["rules_grafana/example:latest"],
+    tags = ["oci"],
 )

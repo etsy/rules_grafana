@@ -22,12 +22,15 @@ bcr_test_module_macos:
       - 8.x
   tasks:
     build_and_test:
-      name: "Build and test (no Docker)"
+      name: "Build and test (no OCI/Docker)"
       build_targets:
         - "//..."
+      build_flags:
+        # OCI targets use select() for linux/amd64 which fails on arm64
+        - "--build_tag_filters=-oci"
       test_targets:
         - "//..."
       test_flags:
         # Docker not available on GitHub macOS runners
         # https://github.com/actions/runner/issues/1456
-        - "--test_tag_filters=-docker"
+        - "--test_tag_filters=-docker,-oci"
