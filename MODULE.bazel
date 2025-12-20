@@ -2,7 +2,7 @@ module(
     name = "rules_grafana",
     version = "2.0.0",
     bazel_compatibility = [">=8.0.0"],
-    compatibility_level = 1,
+    compatibility_level = 2,
 )
 
 bazel_dep(name = "aspect_bazel_lib", version = "2.21.2")

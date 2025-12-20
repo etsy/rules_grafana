@@ -1,2 +1,2 @@
 # run `bazel run //grafana:requirements.update` when you update this file
-grafana-foundation-sdk==1759917919!11.6.0
+grafanalib==0.7.1

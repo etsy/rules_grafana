@@ -12,6 +12,7 @@ bcr_test_module_linux:
         - "//..."
       test_targets:
         - "//..."
+      # Linux runners have Docker available, so run docker/oci tests here.
 
 bcr_test_module_macos:
   module_path: ""

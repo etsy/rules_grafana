@@ -47,7 +47,7 @@ bazel_dep(name = "rules_grafana", version = "2.0.0")
 git_override(
     module_name = "rules_grafana",
     remote = "https://github.com/etsy/rules_grafana.git",
-    branch = "grafana-foundation-sdk",
+    branch = "main",
 )
 
 # For plugins and container setup
@@ -92,36 +92,23 @@ to ensure it has a [consistent URL in Grafana](http://docs.grafana.org/administr
 
 ### Python dashboards
 
-Dashboards can also be generated with Python using the
-[`grafana-foundation-sdk`](https://github.com/grafana/grafana-foundation-sdk) library.
-The SDK provides type-safe builders for creating Grafana dashboards programmatically.
+Dashboards can also be generated with Python,
+using the [`grafanalib`](https://github.com/weaveworks/grafanalib) library.
+`grafanalib` is automatically imported,
+and you can also add other `deps` to help build your dashboard.
 
 Each Python dashboard file should print the complete JSON of a Grafana dashboard.
-Here's a template to get started:
+An easy way to do that is to follow a template like this:
 
 ```python
-import json
-from grafana_foundation_sdk.builders import dashboard as dashboard_builder
-from grafana_foundation_sdk.builders import text, timeseries
-from grafana_foundation_sdk.cog.encoder import JSONEncoder
-from grafana_foundation_sdk.models.dashboard import GridPos
+from grafanalib.core import *
+from grafanalib._gen import print_dashboard
 
-dashboard = (
-    dashboard_builder.Dashboard("My Dashboard")
-    .with_panel(
-        text.Panel()
-        .title("Welcome")
-        .grid_pos(GridPos(h=4, w=24, x=0, y=0))
-    )
-    .with_panel(
-        timeseries.Panel()
-        .title("Metrics")
-        .grid_pos(GridPos(h=8, w=12, x=0, y=4))
-    )
-    .build()
+dashboard = Dashboard(
+    # Fill in your dashboard!
 )
 
-print(json.dumps(dashboard, cls=JSONEncoder, indent=2))
+print_dashboard(dashboard.auto_panel_ids()) # `auto_panel_ids()` call is required!
 ```
 
 Use `py_dashboards` to add Python files that generate dashboards to your build.
@@ -199,7 +186,7 @@ Then pass the plugin to the image rule's `plugins` list as `@grafana_plotly_plug
 
 ### Custom Grafana image
 
-The default version of Grafana (12.0) may not suit your needs.
+The default version of Grafana (11.6.9) may not suit your needs.
 You can override the container by modifying the grafana extension in your MODULE.bazel.
 
 ## API Reference

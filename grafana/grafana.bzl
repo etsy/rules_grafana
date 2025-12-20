@@ -1,27 +1,23 @@
 """Bazel rules for building Grafana dashboards.
 
 This module provides rules for building Grafana dashboards from JSON files
-or Python scripts using the grafana-foundation-sdk.
+or Python scripts using grafanalib.
 
-Example Python dashboard using grafana-foundation-sdk:
+Example Python dashboard using grafanalib:
 
-    import json
-    from grafana_foundation_sdk.builders import dashboard as dashboard_builder
-    from grafana_foundation_sdk.builders import text, timeseries
-    from grafana_foundation_sdk.cog.encoder import JSONEncoder
-    from grafana_foundation_sdk.models.dashboard import GridPos
+    from grafanalib.core import *
+    from grafanalib._gen import print_dashboard
 
-    dashboard = (
-        dashboard_builder.Dashboard("My Dashboard")
-        .with_panel(
-            text.Panel()
-            .title("Welcome")
-            .grid_pos(GridPos(h=4, w=24, x=0, y=0))
-        )
-        .build()
+    dashboard = Dashboard(
+        title="My Dashboard",
+        rows=[
+            Row(panels=[
+                Text(content="Welcome"),
+            ]),
+        ],
     )
 
-    print(json.dumps(dashboard, cls=JSONEncoder, indent=2))
+    print_dashboard(dashboard.auto_panel_ids())
 """
 
 load("@rules_grafana_deps//:requirements.bzl", "requirement")
@@ -100,7 +96,7 @@ def _py_dashboard_builder(src, deps = None):
     if deps == None:
         deps = []
     py_binary_name = src.replace(".py", "_builder")
-    grafana_deps = requirement("grafana_foundation_sdk")
+    grafana_deps = requirement("grafanalib")
     py_binary(
         name = py_binary_name,
         srcs = [src],
