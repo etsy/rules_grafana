@@ -12,14 +12,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bazel: ["7.4.1", "8.0.0"]
+        bazel: ["latest-7", "latest"]
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Bazel
         uses: bazel-contrib/setup-bazel@0.14.0
         with:
-          bazelisk-version: "1.25.0"
+          bazelisk-version: "1.27.0"
           disk-cache: ${{ github.workflow }}-linux-${{ matrix.bazel }}
           repository-cache: ${{ github.workflow }}
 
@@ -38,26 +38,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bazel: ["7.4.1", "8.0.0"]
+        bazel: ["latest-7", "latest"]
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Bazel
         uses: bazel-contrib/setup-bazel@0.14.0
         with:
-          bazelisk-version: "1.25.0"
+          bazelisk-version: "1.27.0"
           disk-cache: ${{ github.workflow }}-macos-${{ matrix.bazel }}
           repository-cache: ${{ github.workflow }}
 
-      # On macOS, only build non-OCI targets (grafana image requires linux)
-      - name: Build (excluding OCI targets)
-        run: |
-          bazel build //grafana/... //test:json_dashboards //test:py_dashboards
+      - name: Build
+        run: bazel build //...
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
       - name: Test (excluding docker tests)
-        run: |
-          bazel test //test:json_no_uid_test //test:json_existing_uid_test //test:py_dash_test //grafana:requirements.test
+        run: bazel test //test:json_no_uid_test //test:json_existing_uid_test //test:py_dash_test //grafana:requirements.test
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}

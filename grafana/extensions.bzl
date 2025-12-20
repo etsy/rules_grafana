@@ -28,12 +28,15 @@ _grafana_plugin_tag = tag_class(
 def _grafana_extension_impl(module_ctx):
     """Implementation for grafana module extension."""
     
-    # Pull default grafana container
+    # Pull default grafana container (multi-platform for amd64 and arm64)
     oci_pull(
         name = "grafana_oci",
         image = "index.docker.io/grafana/grafana",
         digest = DEFAULT_GRAFANA_SHA,
-        platforms = ["linux/amd64"],
+        platforms = [
+            "linux/amd64",
+            "linux/arm64",
+        ],
     )
     
     # Process grafana_plugin tags
