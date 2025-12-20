@@ -57,6 +57,6 @@ jobs:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
 
       - name: Test (excluding OCI/docker tests)
-        run: bazel test //... --test_tag_filters=-docker,-oci
+        run: bazel test //... --build_tag_filters=-oci --test_tag_filters=-docker,-oci
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel }}
